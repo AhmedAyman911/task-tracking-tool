@@ -1,12 +1,14 @@
-
+import React from "react";
+import KanbanBoard from "./components/kanban_board";
+import ScrumTimeline from "./components/scrum_timeline"
 
 function App() {
-
   return (
-    <h1 className="text-3xl font-bold underline text-red-700 flex justify-center">
-      MEME
-    </h1>
-  )
+    <div>
+      
+      <ScrumTimeline />
+    </div>
+  );
 }
 
-export default App
+export default App;
