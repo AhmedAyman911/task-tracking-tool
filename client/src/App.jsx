@@ -1,18 +1,14 @@
-import AuthPage from "./componants/AuthPage"
-import ListKanban from "./componants/ListKanban"
-
+import React from "react";
+import KanbanBoard from "./components/kanban_board";
+import ScrumTimeline from "./components/scrum_timeline"
 
 function App() {
-
   return (
-    <>
-    <ListKanban/>
-    <h1 className="text-3xl font-bold underline text-red-700 flex justify-center">
-      MEME
-    </h1>
-    <AuthPage/>
-    </>
-  )
+    <div>
+      
+      <ScrumTimeline />
+    </div>
+  );
 }
 
-export default App
+export default App;
