@@ -1,12 +1,18 @@
 import React from "react";
 import KanbanBoard from "./components/kanban_board";
 import ScrumTimeline from "./components/scrum_timeline"
+import AuthPage from "./componants/AuthPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <div>
-      
-      <ScrumTimeline />
+      <Router>
+        <Routes>
+          <Route path="/" element={<AuthPage />} />
+        </Routes>
+      </Router>
+
     </div>
   );
 }
