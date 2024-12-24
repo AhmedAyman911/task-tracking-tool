@@ -1,25 +1,78 @@
-import { useState } from 'react';
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 const ListKanban = () => {
-    const [tableData, setTableData] = useState([
-        {
-            type: "Task",
-            key: "SPM-001",
-            summary: "Set up project structure",
-            status: "In Progress",
-            assignee: "John Doe",
-            dueDate: "2024-12-30",
-            labels: "High Priority",
-        },
-        {
-            type: "Bug",
-            key: "SPM-002",
-            summary: "Fix login issue",
-            status: "To Do",
-            assignee: "Jane Smith",
-            dueDate: "2024-12-25",
-            labels: "Critical",
-        },
-    ]);
+    const [tableData, setTableData] = useState([]);
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        axios
+            .get("http://localhost:3001/users/team")
+            .then((response) => {
+                setUsers(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching users:", error);
+            });
+    }, []);
+    // Fetch tasks from the backend
+    useEffect(() => {
+        axios
+            .get("http://localhost:3001/tasks/")
+            .then((response) => {
+                setTableData(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching tasks:", error);
+            });
+    }, []);
+    const [showForm, setShowForm] = useState(false);
+    const [type, setType] = useState("");
+    const [key, setKey] = useState("");
+    const [summary, setSummary] = useState("");
+    const [status, setStatus] = useState("To Do");
+    const [assignee, setAssignee] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [testing, setTesting] = useState("");
+    const [uid, setUid] = useState("");
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Backend API call
+        axios.post('http://localhost:3001/tasks/', {
+            type,
+            key,
+            summary,
+            status,
+            assignee, // Name of the user
+            uid, // UID of the user
+            dueDate,
+            testing,
+        })
+            .then((response) => {
+                // Update table data with the new task
+                setTableData((prevData) => [...prevData, response.data]);
+                setShowForm(false); // Close the form
+            })
+            .catch((error) => {
+                console.error("Error adding task:", error);
+            });
+    };
+    const handleAssigneeChange = (e) => {
+        const selectedId = e.target.value; // This is the _id from the dropdown
+        const selectedUser = users.find((user) => user._id === selectedId);
+
+        if (selectedUser) {
+            setUid(selectedUser._id); // Save the user ID
+            setAssignee(selectedUser.name); // Save the user name
+        } else {
+            console.error("Selected user not found in users array");
+        }
+    };
+
+    
+
+
+
     return (
         <div className="flex h-screen">
             {/* Sidebar */}
@@ -59,7 +112,6 @@ const ListKanban = () => {
                         <button className="hover:text-blue-600">Chart</button>
                     </div>
                 </header>
-
                 {/* Search Bar */}
                 <div className="p-4 flex items-center">
                     <input
@@ -80,18 +132,14 @@ const ListKanban = () => {
                         />
                     </div>
                 </div>
-
                 {/* Table Section */}
                 <section className="p-4 flex-grow flex flex-col">
                     <table className="w-full border-collapse bg-gray-50 rounded-lg overflow-hidden">
                         <thead>
                             <tr className="bg-gray-100">
-                            <th
+                                <th
                                     className="border bg-blue-500 text-white text-center cursor-pointer hover:bg-blue-600"
-                                    onClick={() => {
-                                        console.log("Add New Entry Clicked");
-                                        // Add your functionality here
-                                    }}
+                                    onClick={() => setShowForm(true)} // Show form on click
                                     title="Add New Entry"
                                 >
                                     +
@@ -102,50 +150,115 @@ const ListKanban = () => {
                                 <th className="border px-4 py-2">Status</th>
                                 <th className="border px-4 py-2">@ Assignee</th>
                                 <th className="border px-4 py-2">Due Date</th>
-                                <th className="border px-4 py-2">Labels</th>
-                                
+                                <th className="border px-4 py-2">Testing</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.length > 0 ? (
-                                tableData.map((row, index) => (
-                                    <tr key={index} className="hover:bg-gray-50">
-                                        <td className="border px-4 py-2">{row.type}</td>
-                                        <td className="border px-4 py-2">{row.key}</td>
-                                        <td className="border px-4 py-2">{row.summary}</td>
-                                        <td className="border px-4 py-2">{row.status}</td>
-                                        <td className="border px-4 py-2">{row.assignee}</td>
-                                        <td className="border px-4 py-2">{row.dueDate}</td>
-                                        <td className="border px-4 py-2">{row.labels}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                <td colSpan="7" className="text-center py-20">
-                                    <div className="flex flex-col items-center">
-                                        <img
-                                            src="https://as2.ftcdn.net/v2/jpg/03/76/41/01/1000_F_376410119_inQNd5QwQVW9SxL8vOinPJG10avzR200.jpg"
-                                            alt="Calendar Icon"
-                                            className="w-64 mb-4"
-                                        />
-                                        <h2 className="text-lg font-bold text-gray-600">
-                                            View your work in a list
-                                        </h2>
-                                        <p className="text-gray-500 text-center mt-2">
-                                            Manage and sort all your project’s work
-                                            into a single list that can be easily
-                                            scanned and sorted by category.
-                                        </p>
-                                        <button className="mt-4 bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
-                                            Create issue
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            )}
+                            {tableData.map((row, index) => (
+                                <tr key={index} className="hover:bg-gray-50">
+                                    <td className="border px-4 py-2"></td>
+                                    <td className="border px-4 py-2">{row.type}</td>
+                                    <td className="border px-4 py-2">{row.key}</td>
+                                    <td className="border px-4 py-2">{row.summary}</td>
+                                    <td className="border px-4 py-2">{row.status}</td>
+                                    <td className="border px-4 py-2">{row.assignee}</td>
+                                    <td className="border px-4 py-2">{row.dueDate ? new Date(row.dueDate).toISOString().split("T")[0] : "N/A"}</td>
+                                    <td className="border px-4 py-2">{row.testing}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </section>
+
+                {/* Form Section */}
+                {showForm && (
+                    <div className="p-4 bg-gray-100">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type</label>
+                                <input
+                                    type="text"
+                                    id="type"
+                                    value={type}
+                                    onChange={(e) => setType(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="key" className="block text-sm font-medium text-gray-700">Key</label>
+                                <input
+                                    type="text"
+                                    id="key"
+                                    value={key}
+                                    onChange={(e) => setKey(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="summary" className="block text-sm font-medium text-gray-700">Summary</label>
+                                <input
+                                    type="text"
+                                    id="summary"
+                                    value={summary}
+                                    onChange={(e) => setSummary(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+                                <select
+                                    id="status"
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                >
+                                    <option value="To Do">To Do</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Done">Done</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="assignee" className="block text-sm font-medium text-gray-700">Assignee</label>
+                                <select
+                                    id="assignee"
+                                    value={uid}
+                                    onChange={handleAssigneeChange}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                >
+                                    <option value="">Select a user</option>
+                                    {users.map((user) => (
+                                        <option key={user._id} value={user._id}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700">Due Date</label>
+                                <input
+                                    type="date"
+                                    id="dueDate"
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="testing" className="block text-sm font-medium text-gray-700">Testing</label>
+                                <input
+                                    type="text"
+                                    id="testing"
+                                    value={testing}
+                                    onChange={(e) => setTesting(e.target.value)}
+                                    className="border rounded-md px-4 py-2 w-full"
+                                />
+                            </div>
+                            <button type="submit" className="bg-blue-500 text-white px-6 py-2 rounded-md">
+                                Add Task
+                            </button>
+                        </form>
+                    </div>
+                )}
             </main>
         </div>
     );

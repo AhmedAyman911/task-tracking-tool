@@ -4,6 +4,17 @@ const UserModel = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 
+// Get all users except managers
+router.get('/team', async (req, res) => {
+    try {
+        const users = await UserModel.find({ role: { $ne: 'manager' } }, { id: 1, name: 1 });
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({ error: 'Error fetching users' });
+    }
+});
+
 router.post('/signup', async (req, res) => {
     const { name, password, email, role } = req.body;
     if (password.length < 8) {

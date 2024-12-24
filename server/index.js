@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const usersRoutes = require("./controller/users");
-const sprintRoutes = require("./controller/sprints"); // Import sprints route
-
+const sprintRoutes = require("./controller/sprints");
+const tasksRoutes = require("./controller/tasks");
 const app = express();
 
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(cors({
 
 app.use('/users', usersRoutes);
 app.use("/api/sprints", sprintRoutes); // Register sprints route
-
+app.use('/tasks', tasksRoutes);
 const mongoUri = "mongodb+srv://ahmedayman26:221341@spm.68rqu.mongodb.net/spm?retryWrites=true&w=majority";
 
 // Database connection
