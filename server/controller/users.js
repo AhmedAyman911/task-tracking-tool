@@ -5,14 +5,26 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 
 router.post('/signup', async (req, res) => {
-    const { name, password, email,role } = req.body;
-    bcrypt.hash(password, 10)
-        .then(hash => {
-            UserModel.create({ name, password: hash, email,role })
-                .then(users => { res.json(users); })
-                .catch(err => res.json(err))
-        })
+    const { name, password, email, role } = req.body;
+    if (password.length < 8) {
+        return res.status(400).json({ message: "Password must be at least 8 characters long" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await UserModel.create({ name, password: hashedPassword, email, role });
+        res.status(201).json(user); // Success: 201 Created
+    } catch (err) {
+        if (err.code === 11000) {
+            // Handle duplicate email error
+            res.status(400).json({ message: "Email already exists" });
+        } else {
+            // Handle other errors
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 });
+
 router.post('/login', async (req, res) => {
     const { password, email } = req.body;
     try {

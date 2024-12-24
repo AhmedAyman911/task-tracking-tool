@@ -5,5 +5,5 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     role:{type: String, required: true}
 })
-const UserModel = mongoose.model("users",UserSchema)
+const UserModel = mongoose.model("user",UserSchema)
 module.exports = UserModel

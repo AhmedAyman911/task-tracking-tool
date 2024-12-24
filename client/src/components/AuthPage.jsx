@@ -42,7 +42,7 @@ const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:3001/login', { password, email })
+    axios.post('http://localhost:3001/users/login', { password, email })
       .then(response => {
         const { token, user } = response.data;
         if (token && user) {
@@ -50,7 +50,10 @@ const LoginForm = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
             navigate("/");
-            window.location.reload();
+            //window.location.reload();
+            setAlertMessage("login successful!");
+            setAlertSeverity("success");
+            setAlertOpen(true);
           }
         } else {
           console.error('Token or user data missing in response');
@@ -103,16 +106,16 @@ const LoginForm = () => {
         </button>
       </div>
       <Snackbar
-                open={alertOpen}
-                autoHideDuration={2500}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
-            >
-                <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
-                    {alertMessage}
-                </Alert>
-            </Snackbar>
+        open={alertOpen}
+        autoHideDuration={2500}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
+      >
+        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
       <button
         type="submit"
         className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
@@ -120,7 +123,7 @@ const LoginForm = () => {
         Login
       </button>
     </form>
-    
+
   );
 };
 
@@ -134,15 +137,33 @@ const SignupForm = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("error");
+
   const handelsubmit = (e) => {
-    e.preventDefault()
-    axios.post('http://localhost:3001/signup', { name, password, email, role })
-      .then(result => console.log(result), navigate('/'))
-      .catch(err => console.log(err))
-      setAlertMessage("Error signing up. Please check your credentials and try again.");
-        setAlertSeverity("error");
-        setAlertOpen(true);
-  }
+    e.preventDefault();
+    axios.post('http://localhost:3001/users/signup', { name, password, email, role })
+        .then(result => {
+            console.log(result);
+            setAlertMessage("Signup successful!");
+            setAlertSeverity("success");
+            setAlertOpen(true);
+            navigate('/'); // Only navigate on successful signup
+        })
+        .catch(err => {
+            console.error(err);
+            if (err.response) {
+                // Show the server's error message
+                setAlertMessage(err.response.data.message || "Error signing up. Please try again.");
+            } else {
+                // Generic error message
+                setAlertMessage("An unexpected error occurred. Please try again.");
+            }
+            setAlertSeverity("error");
+            setAlertOpen(true);
+        });
+};
+
+
+
   const handleClose = () => {
     setAlertOpen(false);
   };
@@ -211,16 +232,16 @@ const SignupForm = () => {
         Sign Up
       </button>
       <Snackbar
-                open={alertOpen}
-                autoHideDuration={2500}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
-            >
-                <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
-                    {alertMessage}
-                </Alert>
-            </Snackbar>
+        open={alertOpen}
+        autoHideDuration={2500}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
+      >
+        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </form>
   );
 };

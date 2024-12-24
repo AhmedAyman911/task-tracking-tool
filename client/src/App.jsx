@@ -1,7 +1,7 @@
 import React from "react";
 import KanbanBoard from "./components/kanban_board";
 import ScrumTimeline from "./components/scrum_timeline"
-import AuthPage from "./componants/AuthPage";
+import AuthPage from "./components/AuthPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
