@@ -9,7 +9,7 @@ function App() {
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<AuthPage />} />
+          <Route path="/" element={<ScrumTimeline />} />
         </Routes>
       </Router>
 
