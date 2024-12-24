@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use('/users', usersRoutes);
-const mongoUri = "MONGO_URI=mongodb+srv://ahmedayman26:SOAassignment1@assignment-1.gxws7.mongodb.net/";
+const mongoUri = "mongodb+srv://ahmedayman26:221341@spm.68rqu.mongodb.net/";
 
 //database connection
 mongoose.connect(mongoUri)
