@@ -1,15 +1,6 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPenClip,
-  faHourglassHalf,
-  faChalkboard,
-  faList,
-  faCode,
-  faBullseye,
-  faSearch,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import timelineImage from "../assets/timeline.jpg";
 import gettingstartedImage from "../assets/gettingstarted.jpg";
 import goalsImage from "../assets/goals.jpg";
@@ -17,7 +8,7 @@ import boardImage from "../assets/board.jpg";
 import listImage from "../assets/list.jpg";
 import codeImage from "../assets/code.jpg";
 import searchImage from "../assets/search.jpg";
-
+import axios from "axios";
 const KanbanBoard = () => {
   // State to store the list of tasks for each column
   const [tasks, setTasks] = useState({
@@ -25,6 +16,22 @@ const KanbanBoard = () => {
     inProgress: [],
     done: [],
   });
+
+  const [alltasks, setAllTasks] = useState([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/tasks/")
+      .then((response) => {
+        setAllTasks(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+      });
+  }, []);
+  // Filter tasks based on status
+  const filterTasksByStatus = (status) => {
+    return alltasks.filter((task) => task.status === status);
+  };
 
   // Function to add a task to a specific column
   const addTask = (column) => {
@@ -49,21 +56,21 @@ const KanbanBoard = () => {
       {/* Header */}
       <header className="bg-blue-200 p-4 flex justify-between items-center">
         <div>
-        <h1 className="text-lg font-bold text-2xl">Workio</h1>
+          <h1 className="text-lg font-bold text-2xl">Workio</h1>
         </div>
         <div>
           <nav className="space-x-10 text-xl">
             <a href="#" className="text-gray-900 hover:text-gray-900 font-semibold">
               Create New Project
             </a>
-            </nav>
-            </div>
+          </nav>
+        </div>
         <div className="flex items-center space-x-4 text-xl">
           <button className="text-gray-600">🔔</button>
           <button className="text-gray-900">Login/Signup</button>
         </div>
       </header>
-      
+
       {/* Sidebar + Main Content */}
       <div className="flex">
         {/* Sidebar */}
@@ -85,15 +92,15 @@ const KanbanBoard = () => {
                 Timeline
               </a>
               <a href="#" className="block p-2 bg-gray-200 rounded text-base flex items-center">
-              <img src={boardImage} alt="Timeline" className="w-7 h-7 mr-2" />
+                <img src={boardImage} alt="Timeline" className="w-7 h-7 mr-2" />
                 Board
               </a>
               <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-              <img src={listImage} alt="Timeline" className="w-7 h-7 mr-2" />
+                <img src={listImage} alt="Timeline" className="w-7 h-7 mr-2" />
                 List
               </a>
               <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-              <img src={goalsImage} alt="Timeline" className="w-7 h-7 mr-2" />
+                <img src={goalsImage} alt="Timeline" className="w-7 h-7 mr-2" />
                 Goals
               </a>
             </nav>
@@ -117,7 +124,7 @@ const KanbanBoard = () => {
 
           {/* Search Bar */}
           <div className="flex items-center">
-          <img src={searchImage} alt="Code" className="w-7 h-7 mr-2" />
+            <img src={searchImage} alt="Code" className="w-7 h-7 mr-2" />
             <input
               type="text"
               placeholder="Search"
@@ -129,75 +136,60 @@ const KanbanBoard = () => {
           <div className="grid grid-cols-3 gap-4 px-2 py-7">
             {/* To Do Column */}
             <div className="bg-gray-200 shadow rounded p-4 h-auto">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">To Do</h2>
-                <button
-                  onClick={() => addTask("todo")}
-                  className="bg-blue-400 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
+              <h2 className="text-lg font-semibold">To Do</h2>
               <div className="mt-4 space-y-2">
-                {tasks.todo.map((task, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={task}
-                    onChange={(e) => handleTaskChange("todo", index, e.target.value)}
-                    className="w-full p-2 border rounded"
-                    placeholder="Task name..."
-                  />
+                {filterTasksByStatus("To Do").map((task) => (
+                  <div key={task._id} className="bg-white p-2 rounded shadow hover:bg-blue-100 hover:shadow-lg transition-all duration-200">
+                    <h3 className="font-medium">{task.key}</h3>
+                    <p className="text-sm text-gray-600">{task.summary}</p>
+                    <p className="text-sm text-gray-600">Assignee: {task.assignee}</p>
+                    <p className="text-sm text-gray-600">
+                      Due:{" "}
+                      {task.dueDate
+                        ? new Date(task.dueDate).toLocaleDateString() // Parse and format date
+                        : "No due date"}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* In Progress Column */}
             <div className="bg-gray-200 shadow rounded p-4 h-auto">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">In Progress</h2>
-                <button
-                  onClick={() => addTask("inProgress")}
-                  className="bg-blue-400 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
+              <h2 className="text-lg font-semibold">In Progress</h2>
               <div className="mt-4 space-y-2">
-                {tasks.inProgress.map((task, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={task}
-                    onChange={(e) => handleTaskChange("inProgress", index, e.target.value)}
-                    className="w-full p-2 border rounded"
-                    placeholder="Task name..."
-                  />
+                {filterTasksByStatus("In Progress").map((task) => (
+                  <div key={task._id} className="bg-white p-2 rounded shadow hover:bg-blue-100 hover:shadow-lg transition-all duration-200">
+                    <h3 className="font-medium">{task.key}</h3>
+                    <p className="text-sm text-gray-600">{task.summary}</p>
+                    <p className="text-sm text-gray-600">Assignee: {task.assignee}</p>
+                    <p className="text-sm text-gray-600">
+                      Due:{" "}
+                      {task.dueDate
+                        ? new Date(task.dueDate).toLocaleDateString()
+                        : "No due date"}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Done Column */}
             <div className="bg-gray-200 shadow rounded p-4 h-auto">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Done</h2>
-                <button
-                  onClick={() => addTask("done")}
-                  className="bg-blue-400 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  <FontAwesomeIcon icon={faPlus} />
-                </button>
-              </div>
+              <h2 className="text-lg font-semibold">Done</h2>
               <div className="mt-4 space-y-2">
-                {tasks.done.map((task, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={task}
-                    onChange={(e) => handleTaskChange("done", index, e.target.value)}
-                    className="w-full p-2 border rounded"
-                    placeholder="Task name..."
-                  />
+                {filterTasksByStatus("Done").map((task) => (
+                  <div key={task._id} className="bg-white p-2 rounded shadow hover:bg-blue-100 hover:shadow-lg transition-all duration-200">
+                    <h3 className="font-medium">{task.key}</h3>
+                    <p className="text-sm text-gray-600">{task.summary}</p>
+                    <p className="text-sm text-gray-600">Assignee: {task.assignee}</p>
+                    <p className="text-sm text-gray-600">
+                      Due:{" "}
+                      {task.dueDate
+                        ? new Date(task.dueDate).toLocaleDateString() // Parse and format date
+                        : "No due date"}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
