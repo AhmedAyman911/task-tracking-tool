@@ -1,47 +1,43 @@
-import { useState } from "react"; // Import React and useState
+import { useState,useEffect} from "react"; // Import React and useState
 import axios from "axios";
 import "./backlog.css";
-const [showForm, setShowForm] = useState(false);
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [priority, setpriority] = useState("");
-    const [dueDate, setDueDate] = useState("");
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  // Backend API call
-  axios.post('http://localhost:3001/tasks/', {
+const Backlog = () => {
+  const [showForm, setShowForm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/backlog/")
+      .then((response) => {
+        setTableData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching issues:", error);
+      });
+  }, [])
+
+  const handleBacklogSubmit = (e) => {
+    e.preventDefault();
+    axios.post('http://localhost:3001/backlog/add', {
       title,
       description,
       priority,
       dueDate,
-  })
+    })
       .then((response) => {
-          // Update table data with the new task
-          setTableData((prevData) => [...prevData, response.data]);
-          setShowForm(false); // Close the form
+        setTableData((prevData) => [...prevData, response.data]);
+        setShowForm(false); // Close the form
       })
       .catch((error) => {
-          console.error("Error adding task:", error);
+        console.error("Error adding issue:", error);
       });
-};
-
-const Backlog = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleStartSprint = (e) => {
-    e.preventDefault();
-    // Handle form submission logic here
-    closeModal();
-  };
 
   return (
     <div className="app">
@@ -67,7 +63,7 @@ const Backlog = () => {
       <div className="sidebar">
         <h2>Workio</h2>
         <ul>
-          
+
           <li>
             <a href="#">
               <img src="src/assets/progress.png" alt="Timeline Icon" className="sidebar-icon" /> Timeline
@@ -76,14 +72,14 @@ const Backlog = () => {
           <li>
             <a href="#">
               <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
-            </a> 
+            </a>
           </li>
           <li>
             <a href="#">
               <img src="src/assets/backlog.png" alt="List Icon" className="sidebar-icon" /> Backlog
             </a>
           </li>
-          
+
           <li>
             <a href="#">
               <img src="src/assets/target.png" alt="Code Icon" className="sidebar-icon" /> Code
@@ -117,17 +113,11 @@ const Backlog = () => {
             </div>
           </div>
         </div>
-<br></br><br></br>
+        <br></br><br></br>
         {/* Sprint Section */}
         <div className="sprint-section">
           <div className="sprint-header">
-            <h2>Sprint 1 (0 issues)</h2>
-            <div className="sprint-actions">
-              <button className="add-dates-btn">Add dates</button>
-              <button className="start-sprint-btn" onClick={openModal}>
-                Start sprint
-              </button>
-            </div>
+            <h2>project</h2>
           </div>
           <div className="sprint-content">
             <div className="sprint-plan">
@@ -142,49 +132,141 @@ const Backlog = () => {
                 </p>
               </div>
             </div>
-            <button className="create-issue-btn">+ Create issue</button>
+            <button className="create-issue-btn" onClick={() => setShowForm(!showForm)}>+ Create issue</button>
+            <div className="">
+              {showForm && (
+                <form
+                  onSubmit={handleBacklogSubmit}
+                  className="mt-6 bg-gray-100 p-6 rounded shadow-md space-y-4 max-w-lg mx-auto"
+                >
+                  <h2 className="text-xl font-semibold text-gray-700">Create New Issue</h2>
+
+                  <div>
+                    <label
+                      htmlFor="title"
+                      className="block text-sm font-medium text-gray-600"
+                    >
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      id="title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="backlog-description"
+                      className="block text-sm font-medium text-gray-600"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      id="backlog-description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                      rows="4"
+                    ></textarea>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="backlog-priority"
+                      className="block text-sm font-medium text-gray-600"
+                    >
+                      Priority
+                    </label>
+                    <input
+                      type="text"
+                      id="backlog-priority"
+                      value={priority}
+                      onChange={(e) => setPriority(e.target.value)}
+                      className="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="backlog-due-date"
+                      className="block text-sm font-medium text-gray-600"
+                    >
+                      Due Date
+                    </label>
+                    <input
+                      type="date"
+                      id="backlog-due-date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="w-full mt-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowForm(false)}
+                      className="py-2 px-4 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                    >
+                      Add to Backlog
+                    </button>
+                  </div>
+                </form>
+              )}</div>
           </div>
         </div>
 
         {/* Backlog Section */}
         <div className="backlog-section">
-          <h2>Backlog (0 issues)</h2>
-          <div className="backlog-content">
+        <h2 className="text-xl font-bold mb-4">Backlog ({tableData.length} issues)</h2>
+        <div className="backlog-content">
+          {tableData.length > 0 ? (
+            <table className="w-full table-auto border-collapse border border-gray-300 bg-white shadow-md rounded">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Title</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Priority</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left">Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((issue, index) => (
+                  <tr
+                    key={index}
+                    className={`${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
+                  >
+                    <td className="border border-gray-300 px-4 py-2">{issue.title}</td>
+                    <td className="border border-gray-300 px-4 py-2">{issue.description}</td>
+                    <td className="border border-gray-300 px-4 py-2">{issue.priority}</td>
+                    <td className="border border-gray-300 px-4 py-2">{issue.dueDate ? new Date(issue.dueDate).toISOString().split("T")[0] : "N/A"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
             <p>Your backlog is empty</p>
-            <br></br>
-            <button className="create-issue-btn">+ Create issue</button>
-          </div>
+          )}
+          
         </div>
       </div>
+      </div>
 
-      {/* Modal for Start Sprint */}
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Start Sprint</h2>
-            <form onSubmit={handleStartSprint}>
-              <label htmlFor="sprint-name">Sprint Name</label>
-              <input type="text" id="sprint-name" required />
 
-              <label htmlFor="start-date">Start Date</label>
-              <input type="date" id="start-date" required />
+      <div className="modal-content">
+        <h2>Start Sprint</h2>
 
-              <label htmlFor="end-date">End Date</label>
-              <input type="date" id="end-date" required />
-
-              <label htmlFor="sprint-goal">Sprint Goal</label>
-              <textarea id="sprint-goal" rows="4"></textarea>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeModal}>
-                  Cancel
-                </button>
-                <button type="submit">Start</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
