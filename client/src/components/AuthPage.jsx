@@ -49,7 +49,12 @@ const LoginForm = () => {
           if (user) {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
-            navigate("/");
+            console.log(response.data);
+            if (user.role === 'manager') {
+              navigate("/ListKanban");
+            } else {
+              navigate("/devboard");
+            }
             //window.location.reload();
             setAlertMessage("login successful!");
             setAlertSeverity("success");
