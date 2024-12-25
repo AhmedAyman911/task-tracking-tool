@@ -12,9 +12,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/scrumtime" element={<ScrumTimeline />} />
-          <Route path="/" element={<ListKanban />} />
+          <Route path="/ListKanban" element={<ListKanban />} />
           <Route path="/kanbanBoard" element={<KanbanBoard />} />
-          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={<AuthPage />} />
           <Route path="/backlog" element={<Backlog />} />
           <Route path="/goal" element={<Goal />} />
           <Route path="/choose" element={<Choose />} />

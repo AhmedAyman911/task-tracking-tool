@@ -19,6 +19,37 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
+// Update task
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+  
+    try {
+      const task = await TaskModel.findByIdAndUpdate(id, updatedData, { new: true });
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+      res.json(task);
+    } catch (error) {
+      console.error('Error updating task:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+// Delete task
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const task = await TaskModel.findByIdAndDelete(id);
+      if (!task) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+      res.json({ message: 'Task deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
 
 module.exports = router;
