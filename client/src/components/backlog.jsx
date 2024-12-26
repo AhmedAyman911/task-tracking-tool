@@ -1,6 +1,30 @@
 import { useState } from "react"; // Import React and useState
-
+import axios from "axios";
 import "./backlog.css";
+const [showForm, setShowForm] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [priority, setpriority] = useState("");
+    const [dueDate, setDueDate] = useState("");
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  // Backend API call
+  axios.post('http://localhost:3001/tasks/', {
+      title,
+      description,
+      priority,
+      dueDate,
+  })
+      .then((response) => {
+          // Update table data with the new task
+          setTableData((prevData) => [...prevData, response.data]);
+          setShowForm(false); // Close the form
+      })
+      .catch((error) => {
+          console.error("Error adding task:", error);
+      });
+};
 
 const Backlog = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -127,6 +151,7 @@ const Backlog = () => {
           <h2>Backlog (0 issues)</h2>
           <div className="backlog-content">
             <p>Your backlog is empty</p>
+            <br></br>
             <button className="create-issue-btn">+ Create issue</button>
           </div>
         </div>
