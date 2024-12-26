@@ -3,6 +3,9 @@ import ScrumTimeline from "./components/scrum_timeline"
 import AuthPage from "./components/AuthPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ListKanban from "./components/ListKanban";
+import Backlog from "./components/backlog"
+import Choose from "./components/choose"
+import Goal from "./components/goal"
 function App() {
   return (
     <div>
@@ -12,9 +15,11 @@ function App() {
           <Route path="/" element={<ListKanban />} />
           <Route path="/kanbanBoard" element={<KanbanBoard />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/backlog" element={<Backlog />} />
+          <Route path="/goal" element={<Goal />} />
+          <Route path="/choose" element={<Choose />} />
         </Routes>
       </Router>
-
     </div>
   );
 }

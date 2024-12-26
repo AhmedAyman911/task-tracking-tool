@@ -83,7 +83,7 @@ const ScrumTimeline = () => {
 
       if (response.status === 201) {
         fetchSprints(); // Refresh data after saving
-        alert("Task saved successfully!");
+        //alert("Task saved successfully!");
       }
     } catch (error) {
       console.error("Error saving task:", error.response || error.message);
