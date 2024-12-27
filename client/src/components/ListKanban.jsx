@@ -4,7 +4,7 @@ import axios from "axios";
 const ListKanban = () => {
     const [tableData, setTableData] = useState([]);
     const [users, setUsers] = useState([]);
-
+    const [id, setId] = useState(null);
     useEffect(() => {
         axios
             .get("http://localhost:3001/users/team")
@@ -36,27 +36,69 @@ const ListKanban = () => {
     const [testing, setTesting] = useState("");
     const [uid, setUid] = useState("");
     const handleSubmit = (e) => {
+        const resetForm = () => {
+            setType('');
+            setKey('');
+            setSummary('');
+            setStatus('');
+            setAssignee('');
+            setDueDate('');
+            setTesting('');
+            setId(null); // Clear the ID
+          };
         e.preventDefault();
-        // Backend API call
-        axios.post('http://localhost:3001/tasks/', {
-            type,
-            key,
-            summary,
-            status,
-            assignee, // Name of the user
-            uid, // UID of the user
-            dueDate,
-            testing,
-        })
-            .then((response) => {
-                // Update table data with the new task
-                setTableData((prevData) => [...prevData, response.data]);
-                setShowForm(false); // Close the form
-            })
-            .catch((error) => {
-                console.error("Error adding task:", error);
-            });
+
+        if (id) {
+            // Update existing task
+            axios
+                .put(`http://localhost:3001/tasks/${id}`, {
+                    type,
+                    key,
+                    summary,
+                    status,
+                    assignee,
+                    uid, // Assuming `uid` is a required field
+                    dueDate,
+                    testing,
+                })
+                .then((response) => {
+                    // Update the tableData with the edited task
+                    setTableData((prevData) =>
+                        prevData.map((task) =>
+                            task.key === key ? { ...task, ...response.data } : task
+                        )
+                    );
+                    setShowForm(false);
+                    resetForm();
+                })
+                .catch((error) => {
+                    console.error("Error updating task:", error);
+                });
+        } else {
+            // Add new task
+            axios
+                .post("http://localhost:3001/tasks/", {
+                    type,
+                    key,
+                    summary,
+                    status,
+                    assignee,
+                    uid,
+                    dueDate,
+                    testing,
+                })
+                .then((response) => {
+                    // Add the new task to tableData
+                    setTableData((prevData) => [...prevData, response.data]);
+                    setShowForm(false);
+                    resetForm();
+                })
+                .catch((error) => {
+                    console.error("Error adding task:", error);
+                });
+        }
     };
+
     const handleAssigneeChange = (e) => {
         const selectedId = e.target.value; // This is the _id from the dropdown
         const selectedUser = users.find((user) => user._id === selectedId);
@@ -69,9 +111,32 @@ const ListKanban = () => {
         }
     };
 
-    
+    const handleEdit = (task) => {
+        setType(task.type);
+        setKey(task.key)
+        setSummary(task.summary);
+        setStatus(task.status);
+        setAssignee(task.assignee);
+        setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "");
+        setTesting(task.testing);
+        setId(task._id);
+        setShowForm(true);
+    };
 
 
+
+
+    const handleDelete = (id) => {
+        axios
+            .delete(`http://localhost:3001/tasks/${id}`)
+            .then(() => {
+                // Remove the task from tableData
+                setTableData((prevData) => prevData.filter((task) => task._id !== id));
+            })
+            .catch((error) => {
+                console.error("Error deleting task:", error);
+            });
+    };
 
     return (
         <div className="flex h-screen">
@@ -151,6 +216,7 @@ const ListKanban = () => {
                                 <th className="border px-4 py-2">@ Assignee</th>
                                 <th className="border px-4 py-2">Due Date</th>
                                 <th className="border px-4 py-2">Testing</th>
+                                <th className="border px-4 py-2">Actions</th> {/* New column for actions */}
                             </tr>
                         </thead>
                         <tbody>
@@ -164,11 +230,26 @@ const ListKanban = () => {
                                     <td className="border px-4 py-2">{row.assignee}</td>
                                     <td className="border px-4 py-2">{row.dueDate ? new Date(row.dueDate).toISOString().split("T")[0] : "N/A"}</td>
                                     <td className="border px-4 py-2">{row.testing}</td>
+                                    <td className="border px-4 py-2 flex space-x-2 justify-center">
+                                        <button
+                                            onClick={() => handleEdit(row)}
+                                            className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(row._id)}
+                                            className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </section>
+
 
                 {/* Form Section */}
                 {showForm && (

@@ -15,7 +15,7 @@ router.post('/add', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const items = await BacklogItem.find().populate('sprint');
+        const items = await BacklogItem.find();
         res.status(200).json(items);
     } catch (err) {
         res.status(500).json({ error: err.message });
