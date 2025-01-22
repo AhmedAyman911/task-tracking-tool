@@ -1,5 +1,6 @@
 // src/components/goal.jsx
 import './goal.css';
+import { Link } from "react-router-dom";
 
 const Goal = () => {
   return (
@@ -9,7 +10,7 @@ const Goal = () => {
         <div className="navbar-brand">Workio</div>
         <div className="navbar-links">
           <a href="#">Your work</a>
-          <a href="#">Projects</a>
+          <a href="/choose">Projects</a>
           <a href="#">Filters</a>
           <a href="#">Dashboards</a>
           <a href="#">Teams</a>
@@ -23,39 +24,26 @@ const Goal = () => {
       </nav>
 
       {/* Sidebar */}
-      <div className="sidebar">
+       {/* Sidebar */}
+       <div className="sidebar">
         <h2>Workio</h2>
         <ul>
+        <li>
+          <Link to="/goal">
+            <img src="client/src/assets/goals.jpg" alt="Board Icon" className="sidebar-icon" /> Goal
+          </Link>
+        </li>
+        <li>
+          <Link to="/kanbanBoard">
+            <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
+          </Link>
+        </li>
           <li>
-            <a href="#">
-              <img src="src/assets/compass.png" alt="Getting Started Icon" className="sidebar-icon" /> Getting Started
-            </a>
+            <Link to ="/ListKanban">
+              <img src="client/src/assets/list.jpg" alt="List Icon" className="sidebar-icon" /> List
+              </Link>
           </li>
-          <li>
-            <a href="#">
-              <img src="src/assets/progress.png" alt="Timeline Icon" className="sidebar-icon" /> Timeline
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="src/assets/menu.png" alt="List Icon" className="sidebar-icon" /> List
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="src/assets/code.png" alt="Goals Icon" className="sidebar-icon" /> Goals
-            </a>
-          </li>
-          <li>
-            <a href="#">
-              <img src="src/assets/target.png" alt="Code Icon" className="sidebar-icon" /> Code
-            </a>
-          </li>
+         
         </ul>
       </div>
 

@@ -1,8 +1,9 @@
-import axios from 'axios'
+import axios from 'axios';
 import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Snackbar } from '@mui/material';
+
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
 
@@ -12,15 +13,13 @@ const AuthPage = () => {
         <div className="flex justify-center mb-6">
           <button
             onClick={() => setIsSignup(false)}
-            className={`px-4 py-2 text-sm font-semibold ${!isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'
-              }`}
+            className={`px-4 py-2 text-sm font-semibold ${!isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
           >
             Login
           </button>
           <button
             onClick={() => setIsSignup(true)}
-            className={`px-4 py-2 text-sm font-semibold ${isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'
-              }`}
+            className={`px-4 py-2 text-sm font-semibold ${isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
           >
             Sign Up
           </button>
@@ -34,43 +33,38 @@ const AuthPage = () => {
 const LoginForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("error");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('error');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:3001/users/login', { password, email })
-      .then(response => {
+    axios
+      .post('http://localhost:3001/users/login', { password, email })
+      .then((response) => {
         const { token, user } = response.data;
         if (token && user) {
-          if (user) {
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            console.log(response.data);
-            if (user.role === 'manager') {
-              navigate("/ListKanban");
-            } else {
-              navigate("/devboard");
-            }
-            //window.location.reload();
-            setAlertMessage("login successful!");
-            setAlertSeverity("success");
-            setAlertOpen(true);
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          if (user.role === 'manager') {
+            navigate('/choose');
+          } else {
+            navigate('/devBoard'); // Navigate to the choose.jsx page
           }
+          setAlertMessage('Login successful!');
+          setAlertSeverity('success');
+          setAlertOpen(true);
         } else {
-          console.error('Token or user data missing in response');
-          setAlertMessage("Token or user data missing in response.");
-          setAlertSeverity("error");
+          setAlertMessage('Token or user data missing in response.');
+          setAlertSeverity('error');
           setAlertOpen(true);
         }
       })
-      .catch(error => {
-        console.error('Error logging in:', error);
-        setAlertMessage("Error logging in. Please check your credentials and try again.");
-        setAlertSeverity("error");
+      .catch((error) => {
+        setAlertMessage('Error logging in. Please check your credentials and try again.');
+        setAlertSeverity('error');
         setAlertOpen(true);
       });
   };
@@ -78,6 +72,7 @@ const LoginForm = () => {
   const handleClose = () => {
     setAlertOpen(false);
   };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
@@ -115,7 +110,6 @@ const LoginForm = () => {
         autoHideDuration={2500}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
       >
         <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
           {alertMessage}
@@ -128,52 +122,44 @@ const LoginForm = () => {
         Login
       </button>
     </form>
-
   );
 };
 
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [name, setName] = useState("")
-  const [password, setPassword] = useState("")
-  const [email, setEmail] = useState("")
-  const [role, setRole] = useState("")
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertSeverity, setAlertSeverity] = useState("error");
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('error');
 
-  const handelsubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:3001/users/signup', { name, password, email, role })
-        .then(result => {
-            console.log(result);
-            setAlertMessage("Signup successful!");
-            setAlertSeverity("success");
-            setAlertOpen(true);
-            navigate('/'); // Only navigate on successful signup
-        })
-        .catch(err => {
-            console.error(err);
-            if (err.response) {
-                // Show the server's error message
-                setAlertMessage(err.response.data.message || "Error signing up. Please try again.");
-            } else {
-                // Generic error message
-                setAlertMessage("An unexpected error occurred. Please try again.");
-            }
-            setAlertSeverity("error");
-            setAlertOpen(true);
-        });
-};
-
-
+    axios
+      .post('http://localhost:3001/users/signup', { name, password, email, role })
+      .then(() => {
+        setAlertMessage('Signup successful!');
+        setAlertSeverity('success');
+        setAlertOpen(true);
+        navigate('/'); // Navigate to the login page after successful 
+        
+      })
+      .catch((err) => {
+        setAlertMessage(err.response?.data.message || 'Error signing up. Please try again.');
+        setAlertSeverity('error');
+        setAlertOpen(true);
+      });
+  };
 
   const handleClose = () => {
     setAlertOpen(false);
   };
+
   return (
-    <form className="space-y-4" onSubmit={handelsubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
       <div>
         <label className="block text-gray-700">Name</label>
@@ -225,9 +211,9 @@ const SignupForm = () => {
         >
           <option value="">Select Role</option>
           <option value="manager">Manager</option>
-          <option value="Frontend developer">Frontend developer</option>
-          <option value="Backend developer">Backend developer</option>
-          <option value="Ui/Ux developer">Ui/Ux developer</option>
+          <option value="Frontend developer">Frontend Developer</option>
+          <option value="Backend developer">Backend Developer</option>
+          <option value="UI/UX developer">UI/UX Developer</option>
         </select>
       </div>
       <button
@@ -241,7 +227,6 @@ const SignupForm = () => {
         autoHideDuration={2500}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ width: 'fit-content', ml: 2, mb: 2 }} // Add margins if needed
       >
         <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
           {alertMessage}

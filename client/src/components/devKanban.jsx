@@ -44,9 +44,6 @@ const KanbanBoard = () => {
 
     if (isLoading) return <div>Loading tasks...</div>;
     if (error) return <div>{error}</div>;
-
-
-
     return (
         <div className="bg-white h-screen">
             {/* Header */}
@@ -67,7 +64,6 @@ const KanbanBoard = () => {
                 </div>
             </header>
 
-            {/* Sidebar + Main Content */}
             <div className="flex">
                 {/* Sidebar */}
                 <aside className="w-1/5 bg-white p-4 space-y-6 border-gray-300 rounded border-2 h-full">

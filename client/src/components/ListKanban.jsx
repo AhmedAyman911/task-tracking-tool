@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const ListKanban = () => {
     const [tableData, setTableData] = useState([]);
@@ -122,10 +123,6 @@ const ListKanban = () => {
         setId(task._id);
         setShowForm(true);
     };
-
-
-
-
     const handleDelete = (id) => {
         axios
             .delete(`http://localhost:3001/tasks/${id}`)
@@ -139,44 +136,52 @@ const ListKanban = () => {
     };
 
     return (
+        
         <div className="flex h-screen">
-            {/* Sidebar */}
-            <aside className="w-1/5 bg-gray-100 p-4">
-                <h1 className="text-xl font-bold mb-6">Workio</h1>
-                <div className="mb-6">
-                    <h2 className="text-sm font-semibold text-gray-600">PLANNING</h2>
-                    <ul className="mt-2">
-                        <li className="py-2 px-2 hover:bg-blue-100 rounded-lg">
-                            Getting started
-                        </li>
-                        <li className="py-2 px-2 hover:bg-blue-100 rounded-lg">Timeline</li>
-                        <li className="py-2 px-2 hover:bg-blue-100 rounded-lg">Board</li>
-                        <li className="py-2 px-2 bg-blue-500 text-white rounded-lg">
-                            List
-                        </li>
-                        <li className="py-2 px-2 hover:bg-blue-100 rounded-lg">Goals</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2 className="text-sm font-semibold text-gray-600">DEVELOPMENT</h2>
-                    <ul className="mt-2">
-                        <li className="py-2 px-2 hover:bg-blue-100 rounded-lg">Code</li>
-                    </ul>
-                </div>
-            </aside>
+            {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar-brand">Workio</div>
+        <div className="navbar-links">
+          <a href="#">Your work</a>
+          <a href="/choose">Projects</a>
+          <a href="#">Filters</a>
+          <a href="#">Dashboards</a>
+          <a href="#">Teams</a>
+          <a href="#">Plan</a>
+          <a href="#">Apps</a>
+        </div>
+        <div className="navbar-actions">
+          <span className="notification-icon">🔔</span>
+        </div>
+      </nav>
+
+       {/* Sidebar */}
+       <div className="sidebar">
+        <h2>Workio</h2>
+        <ul>
+        <li>
+          <Link to="/goal">
+            <img src="client/src/assets/goals.jpg" alt="Board Icon" className="sidebar-icon" /> Goal
+          </Link>
+        </li>
+        <li>
+          <Link to="/kanbanBoard">
+            <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
+          </Link>
+        </li>
+          <li>
+            <Link to ="/ListKanban">
+              <img src="client/src/assets/list.jpg" alt="List Icon" className="sidebar-icon" /> List
+              </Link>
+          </li>
+         
+        </ul>
+      </div>
 
             {/* Main Content */}
-            <main className="flex-1 bg-white flex flex-col">
-                {/* Header */}
-                <header className="bg-blue-100 p-4 flex justify-between items-center">
-                    <h1 className="text-lg font-bold">List</h1>
-                    <div className="flex gap-4 items-center">
-                        <button className="hover:text-blue-600">Share</button>
-                        <button className="hover:text-blue-600">Filter</button>
-                        <button className="hover:text-blue-600">Format</button>
-                        <button className="hover:text-blue-600">Chart</button>
-                    </div>
-                </header>
+            <main className="flex-1 bg-white flex flex-col" style={{ marginLeft: '230px' }}>
+            {/* Header */}
+                
                 {/* Search Bar */}
                 <div className="p-4 flex items-center">
                     <input

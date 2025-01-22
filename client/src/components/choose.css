@@ -10,6 +10,9 @@
     align-items: center;
     justify-content: center;
 }
+.title{
+    font-size:20px;
+}
 .choose-content {
     text-align: left; 
 }
@@ -20,7 +23,7 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ccc;
-    width: 97%;
+    width: 150%;
     position: fixed;
     top: 0;
     left: 0;
@@ -48,7 +51,7 @@
     justify-content: flex-end; 
 }
 .navbar-actions a {
-    margin-right: 15px; 
+    margin-right: 0px; 
 }
 .navbar-actions .notification-icon {
     font-size: 20px;
@@ -86,8 +89,9 @@
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 15px;
-    padding: 25px;
+    padding: 45px;
     margin-bottom: 20px;
+    font-size: 20px;
     width: 85%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;

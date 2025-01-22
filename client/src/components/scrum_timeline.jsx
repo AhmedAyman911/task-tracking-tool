@@ -8,6 +8,8 @@ import timelineImage from "../assets/timeline.jpg";
 import backlogImage from "../assets/backlog.jpg";
 import codeImage from "../assets/code.jpg";
 import spmImage from "../assets/spm.jpg";
+import { Link } from "react-router-dom";
+
 
 const ScrumTimeline = () => {
   const [sprints, setSprints] = useState([]);
@@ -107,37 +109,9 @@ const ScrumTimeline = () => {
     }
   };
 
-  const editTask = (sprintIndex, taskIndex) => {
-    const updatedSprints = [...sprints];
-    updatedSprints[sprintIndex].tasks[taskIndex].isNew = true; // Mark the task as being edited
-    setSprints(updatedSprints);
-  };
+  
 
-  const saveUpdatedTask = async (sprintIndex, taskIndex) => {
-    const task = sprints[sprintIndex].tasks[taskIndex];
-    
-    if (!task.name || !task.role || !task.from || !task.to) {
-      alert("Please fill out all fields before saving.");
-      return;
-    }
-
-    try {
-      const response = await axios.put(`/api/sprints/update/${task._id}`, {
-        task_name: task.name,
-        role: task.role,
-        from: task.from.toISOString(),
-        to: task.to.toISOString(),
-      });
-
-      if (response.status === 200) {
-        fetchSprints();
-      }
-    } catch (error) {
-      console.error("Error saving updated task:", error);
-      alert("Failed to update task. Please try again later.");
-    }
-  };
-
+ 
   const deleteSprint = async (sprintIndex) => {
     const sprint = sprints[sprintIndex];
 
@@ -152,48 +126,40 @@ const ScrumTimeline = () => {
 
   return (
     <div className="bg-white h-screen">
-      <header className="bg-blue-200 p-4 flex justify-between items-center">
-        <div>
-          <h1 className="text-lg font-bold text-2xl">Workio</h1>
+       <nav className="navbar">
+        <div className="navbar-brand">Workio</div>
+        <div className="navbar-links">
+          <a href="#">Your work</a>
+          <a href="/choose">Projects</a>
+          <a href="#">Filters</a>
+          <a href="#">Dashboards</a>
+          <a href="#">Teams</a>
+          <a href="#">Plan</a>
+          <a href="#">Apps</a>
         </div>
-        <nav className="space-x-10 text-xl">
-          <a href="#" className="text-gray-900 hover:text-gray-900 font-semibold">
-            Create New Project
-          </a>
-        </nav>
-        <div className="flex items-center space-x-4 text-xl">
-          <button className="text-gray-600">🔔</button>
-          <button className="text-gray-900">Login/Signup</button>
+        <div className="navbar-actions">
+          <span className="notification-icon">🔔</span>
         </div>
-      </header>
+      </nav>
 
-      <div className="flex">
-        <aside className="w-1/5 bg-white p-4 space-y-6 border-gray-300 rounded border-2 h-full">
-          <div>
-            <h2 className="text-xl font-semibold"> <img src={spmImage} alt="Timeline" className="w-7 h-7 mr-2" />SPM</h2>
-            <p className="text-lg text-gray-600">Software project</p>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium text-gray-900">PLANNING</h3>
-            <nav className="space-y-1">
-              <a href="#" className="block p-2 rounded bg-gray-200 text-base flex items-center">
-                <img src={timelineImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                Timeline
-              </a>
-              <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                <img src={backlogImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                Backlog
-              </a>
-            </nav>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium text-gray-900">DEVELOPMENT</h3>
-            <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-              <img src={codeImage} alt="Code" className="w-7 h-7 mr-2" />
-              Code
-            </a>
-          </div>
-        </aside>
+      <div className="flex" style={{ marginTop: '100px', marginLeft: '230px' }}>
+      <div className="sidebar">
+        <h2>Workio</h2>
+        <ul>
+        <li>
+          <Link to="/backlog">
+            <img src="client/src/assets/backlog.png" alt="Board Icon" className="sidebar-icon" /> Backlog
+          </Link>
+        </li>
+        <li>
+          <Link to="/scrumtime">
+            <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
+          </Link>
+        </li>
+          
+         
+        </ul>
+      </div>
 
         <main className="flex-1 p-6">
           <div className="flex justify-between items-center">
@@ -218,12 +184,7 @@ const ScrumTimeline = () => {
                     >
                       <FontAwesomeIcon icon={faPlus} /> Add Task
                     </button>
-                    <button
-                      onClick={() => deleteSprint(sprintIndex)}
-                      className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    
                   </div>
                 </div>
 
@@ -281,12 +242,9 @@ const ScrumTimeline = () => {
                           <p><strong>To:</strong> {new Date(task.to).toLocaleDateString()}</p>
                         </div>
                         <div className="flex space-x-2">
-                          <button
-                            onClick={() => editTask(sprintIndex, taskIndex)}
-                            className="bg-green-500 text-white p-2 rounded hover:bg-green-700"
-                          >
-                            <FontAwesomeIcon icon={faPen} />
-                          </button>
+                          
+
+
                           <button
                             onClick={() => deleteTask(sprintIndex, taskIndex, task._id)}
                             className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
