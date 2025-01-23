@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
 const ListKanban = () => {
     const [tableData, setTableData] = useState([]);
     const [users, setUsers] = useState([]);
     const [id, setId] = useState(null);
+    
+    
     useEffect(() => {
         axios
             .get("http://localhost:3001/users/team")
@@ -18,15 +19,13 @@ const ListKanban = () => {
     }, []);
     // Fetch tasks from the backend
     useEffect(() => {
-        axios
-            .get("http://localhost:3001/tasks/")
-            .then((response) => {
-                setTableData(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching tasks:", error);
-            });
-    }, []);
+        const storedProjectId = localStorage.getItem("projectId");
+        if (storedProjectId) {
+          axios.get(`http://localhost:3001/tasks?projectId=${storedProjectId}`).then((response) => {
+            setTableData(response.data);
+          });
+        }
+      }, []);
     const [showForm, setShowForm] = useState(false);
     const [type, setType] = useState("");
     const [key, setKey] = useState("");
@@ -36,6 +35,7 @@ const ListKanban = () => {
     const [dueDate, setDueDate] = useState("");
     const [testing, setTesting] = useState("");
     const [uid, setUid] = useState("");
+    const projectId = localStorage.getItem("projectId");
     const handleSubmit = (e) => {
         const resetForm = () => {
             setType('');
@@ -58,9 +58,10 @@ const ListKanban = () => {
                     summary,
                     status,
                     assignee,
-                    uid, // Assuming `uid` is a required field
+                    uid,
                     dueDate,
                     testing,
+                    projectId,
                 })
                 .then((response) => {
                     // Update the tableData with the edited task
@@ -87,6 +88,7 @@ const ListKanban = () => {
                     uid,
                     dueDate,
                     testing,
+                    projectId,
                 })
                 .then((response) => {
                     // Add the new task to tableData
@@ -96,6 +98,7 @@ const ListKanban = () => {
                 })
                 .catch((error) => {
                     console.error("Error adding task:", error);
+                    console.log("Project ID:", projectId);
                 });
         }
     };

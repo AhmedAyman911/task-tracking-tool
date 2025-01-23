@@ -7,6 +7,7 @@ import Backlog from "./components/backlog"
 import Choose from "./components/choose"
 import Goal from "./components/goal"
 import Devboard from "./components/devKanban"
+import Projects from "./components/projects";
 function App() {
   return (
     <div>
@@ -20,6 +21,7 @@ function App() {
           <Route path="/goal" element={<Goal />} />
           <Route path="/choose" element={<Choose />} />
           <Route path="/devBoard" element={<Devboard />}/>
+          <Route path="/Mprojects" element={<Projects />}/>
         </Routes>
       </Router>
     </div>

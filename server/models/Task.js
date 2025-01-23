@@ -8,6 +8,7 @@ const TaskSchema = new mongoose.Schema({
     assignee: { type: String, required: true },
     uid:{type: String, required: true},
     dueDate: { type: Date, required: true }, 
-    testing: { type: String,required: true }
+    testing: { type: String,required: true },
+    projectId:{type: String, required: true},
 }); 
 module.exports = mongoose.model('task', TaskSchema);

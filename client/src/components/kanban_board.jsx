@@ -10,14 +10,12 @@ const KanbanBoard = () => {
   const [alltasks, setAllTasks] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/tasks/")
-      .then((response) => {
+    const storedProjectId = localStorage.getItem("projectId");
+    if (storedProjectId) {
+      axios.get(`http://localhost:3001/tasks?projectId=${storedProjectId}`).then((response) => {
         setAllTasks(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching tasks:", error);
       });
+    }
   }, []);
 
   // Filter tasks based on status

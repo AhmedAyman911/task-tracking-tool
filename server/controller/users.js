@@ -77,15 +77,6 @@ router.get('/get-token', (req, res) => {
     res.json({ token });
 });
 
-router.get('/get-token', (req, res) => {
-    const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({ message: 'No token found' });
-    }
-    // Optionally, you can verify and decode the token here
-    res.json({ token });
-});
-
 //edit user
 router.get('/users/:id', async (req, res) => {
     try {
