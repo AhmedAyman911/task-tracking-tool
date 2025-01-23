@@ -3,18 +3,16 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 const Projects = () => {
-    const [projects, setProjects] = useState([]); // State to store projects
-    const [loading, setLoading] = useState(true); // State to manage loading
+    const [projects, setProjects] = useState([]); 
+    const [loading, setLoading] = useState(true); 
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     useEffect(() => {
         const fetchManagerIdAndProjects = async () => {
             try {
-                // Step 1: Get and decode the token
                 const token = localStorage.getItem("token");
                 if (token) {
                     const decodedToken = jwtDecode(token);
-                    // Step 2: Fetch projects using managerId
                     const response = await axios.get(`http://localhost:3001/projects/${decodedToken.id}`);
                     setProjects(response.data);
                 } else {
@@ -24,10 +22,9 @@ const Projects = () => {
                 console.error("Error fetching projects:", err);
                 setError("Failed to fetch projects. Please try again.");
             } finally {
-                setLoading(false); // Stop loading after all operations
+                setLoading(false);
             }
         };
-
         fetchManagerIdAndProjects();
     }, []);
 
@@ -39,11 +36,14 @@ const Projects = () => {
     if (error) {
         return <p className="text-red-500">{error}</p>;
     }
-    const handleNavigate = (projectId) => {
-        // Navigate to ListKanban while passing the project ID
-        localStorage.setItem("projectId", projectId); 
-        navigate(`/ListKanban`, { state: { projectId } });
-      };
+    const handleNavigate = (projectId, projectType) => {
+        localStorage.setItem("projectId", projectId);
+        if (projectType === "Kanban") {
+            navigate(`/ListKanban`);
+        } else if (projectType === "Scrum") {
+            navigate(`/scrumtime`);
+        }
+    };
 
     return (
         <div className="container mx-auto p-4">
@@ -61,14 +61,12 @@ const Projects = () => {
                             <p>
                                 <strong>Description:</strong> {project.description}
                             </p>
-                            <p>
-                                <strong>Created At:</strong> {new Date(project.createdAt).toLocaleDateString()}
-                            </p>
                             <button
-                                onClick={() => handleNavigate(project._id)}
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                onClick={() => handleNavigate(project._id, project.type)}
+                                className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${project.type === "Kanban" ? "btn-kanban" : "btn-scrum"
+                                    }`}
                             >
-                                View Kanban
+                                {project.type === "Kanban" ? "View Kanban" : "View Scrum"}
                             </button>
                         </li>
                     ))}

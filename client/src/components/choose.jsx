@@ -9,7 +9,7 @@ const Choose = () => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [managerId, setManagerId] = useState("");
-  
+  const [ptype, setPtype] = useState("");
   const decodeToken = (token) => {
     try {
       const decoded = jwtDecode(token); // jwtDecode is used here
@@ -35,11 +35,17 @@ const Choose = () => {
   }, []);
 
   const handleKanbanClick = () => {
+    setPtype("Kanban");
     setShowModal(true); // Show the modal
   };
 
   const handleCloseModal = () => {
     setShowModal(false); // Hide the modal
+  };
+  
+  const handleScrumClick = () => {
+    setPtype("Scrum");
+    setShowModal(true); // Show the modal
   };
 
   const handleFormSubmit = async (e) => {
@@ -48,7 +54,7 @@ const Choose = () => {
     try {
       const newProject = {
         name: projectName,
-        type: "Kanban",
+        type: ptype,
         description: projectDescription,
         managerId
       };
@@ -66,10 +72,7 @@ const Choose = () => {
     }
   };
 
-  const navigate = useNavigate(); // Initialize navigation
-  const handleScrumClick = () => {
-    navigate("/scrumtime"); // Navigate to the ListKanban route
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="choose-page">

@@ -3,41 +3,30 @@ const router = express.Router();
 const SprintModel = require("../models/Sprint");
 
 // POST: Add a new sprint task
-router.post("/add", async (req, res) => {
-  const { sprint, task_name, role, from, to } = req.body;
-
-  if (!task_name || !role || !from || !to) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
+router.post('/', async (req, res) => {
   try {
-    const newSprint = new SprintModel({
-      sprint,
-      task_name,
-      role,
-      from,
-      to,
-    });
-
-    await newSprint.save();
-
-    res.status(201).json({ message: "Sprint saved successfully!" });
-  } catch (error) {
-    console.error("Error saving sprint:", error);
-    res.status(500).json({ error: "Internal server error." });
+    const task = new SprintModel(req.body);
+    await task.save();
+    res.status(201).json(task);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
-// GET: Retrieve all sprint tasks
-router.get("/tasks", async (req, res) => {
+router.get('/tasks', async (req, res) => {
+  const { projectId } = req.query;
   try {
-    const sprints = await SprintModel.find();
+    const sprints = projectId
+      ? await SprintModel.find({ projectId }) 
+      : await SprintModel.find();
+
     res.status(200).json(sprints);
   } catch (error) {
     console.error("Error retrieving sprint tasks:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
 
 // DELETE: Delete a sprint task
 router.delete("/delete/:id", async (req, res) => {

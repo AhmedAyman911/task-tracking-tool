@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 app.use('/users', usersRoutes);
-app.use("/api/sprints", sprintRoutes); // Register sprints route
+app.use("/sprints", sprintRoutes); 
 app.use('/tasks', tasksRoutes);
 app.use('/backlog', backlogRoutes);
 app.use('/sprintbacklog', sprintbacklogRoutes);

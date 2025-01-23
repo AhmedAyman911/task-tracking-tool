@@ -4,7 +4,8 @@ const SprintSchema = new mongoose.Schema({
     task_name: { type: String, required: true },
     role: { type: String, required: true },
     from: { type: String, required: true},
-    to:{type: String, required: true}
+    to:{type: String, required: true},
+    projectId:{type: String, required: true}
 })
 const SprintModel = mongoose.model("sprints",SprintSchema)
 module.exports = SprintModel

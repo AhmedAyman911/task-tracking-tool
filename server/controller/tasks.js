@@ -13,7 +13,6 @@ router.post('/', async (req, res) => {
 });
 router.get('/', async (req, res) => {
   const { projectId } = req.query; // Use query parameter to filter by projectId
-
   try {
     const tasks = projectId
       ? await TaskModel.find({ projectId }) // Filter tasks by projectId
