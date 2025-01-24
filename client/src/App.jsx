@@ -8,11 +8,14 @@ import Choose from "./components/choose"
 import Goal from "./components/goal"
 import Devboard from "./components/devKanban"
 import Projects from "./components/projects";
+import KanbanDashboard from "./components/kanbanDashboard";
+import DevProjects from "./components/devProjects"
 function App() {
   return (
     <div>
       <Router>
         <Routes>
+          <Route path="/DevProjects" element={<DevProjects />} />
           <Route path="/scrumtime" element={<ScrumTimeline />} />
           <Route path="/ListKanban" element={<ListKanban />} />
           <Route path="/kanbanBoard" element={<KanbanBoard />} />
@@ -20,8 +23,9 @@ function App() {
           <Route path="/backlog" element={<Backlog />} />
           <Route path="/goal" element={<Goal />} />
           <Route path="/choose" element={<Choose />} />
-          <Route path="/devBoard" element={<Devboard />}/>
-          <Route path="/Mprojects" element={<Projects />}/>
+          <Route path="/devBoard" element={<Devboard />} />
+          <Route path="/Mprojects" element={<Projects />} />
+          <Route path="/kanbanDashboard" element={<KanbanDashboard />} />
         </Routes>
       </Router>
     </div>

@@ -72,6 +72,7 @@ const ListKanban = () => {
                     );
                     setShowForm(false);
                     resetForm();
+                    window.location.reload();
                 })
                 .catch((error) => {
                     console.error("Error updating task:", error);
@@ -179,7 +180,6 @@ const ListKanban = () => {
                 </div>
             </nav>
 
-
             {/* Sidebar */}
             <div className="fixed top-[57px] mt-2 left-0 h-[calc(100vh-60px)] w-[250px] bg-[#dde6f4] text-black p-5 font-sans shadow-md z-50">
                 <h2 className="text-lg font-bold mb-5">Workio</h2>
@@ -221,6 +221,19 @@ const ListKanban = () => {
                                 className="w-6 h-6 mr-2"
                             />
                             List
+                        </Link>
+                    </li>
+                    <li>
+                        <Link
+                            to="/kanbanDashboard"
+                            className="flex items-center text-black text-base no-underline p-2 rounded-md hover:bg-[#0052cc] hover:text-white transition"
+                        >
+                            <img
+                                src="client/src/assets/list.jpg"
+                                alt="List Icon"
+                                className="w-6 h-6 mr-2"
+                            />
+                            Dashboard
                         </Link>
                     </li>
                 </ul>

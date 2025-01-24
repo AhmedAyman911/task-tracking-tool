@@ -21,4 +21,12 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+router.get("/", async (req, res) => {
+  try {
+    const projects = await projectModel.find(); 
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 module.exports = router;
