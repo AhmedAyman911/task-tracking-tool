@@ -17,7 +17,7 @@ router.get('/tasks', async (req, res) => {
   const { projectId } = req.query;
   try {
     const sprints = projectId
-      ? await SprintModel.find({ projectId }) 
+      ? await SprintModel.find({ projectId })
       : await SprintModel.find();
 
     res.status(200).json(sprints);
@@ -26,17 +26,14 @@ router.get('/tasks', async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
-//update sprint number
 router.put('/tasks/:id', async (req, res) => {
   const { id } = req.params;
-  const { sprint } = req.body;
+  const updates = req.body; // Capture all fields from the request body
 
   try {
-    const updatedTask = await SprintModel.findByIdAndUpdate(
-      id,
-      { sprint },
-      { new: true }
-    );
+    const updatedTask = await SprintModel.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
 
     if (!updatedTask) {
       return res.status(404).json({ message: 'Task not found' });
@@ -48,6 +45,7 @@ router.put('/tasks/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // DELETE: Delete a sprint task
 router.delete("/delete/:id", async (req, res) => {
@@ -66,32 +64,4 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
-
-// PUT: Update a sprint task
-router.put("/update/:id", async (req, res) => {
-  const { id } = req.params;
-  const { task_name, role, from, to } = req.body;
-
-  if (!task_name || !role || !from || !to) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
-  try {
-    const updatedTask = await SprintModel.findByIdAndUpdate(
-      id,
-      { task_name, role, from, to },
-      { new: true } // Return the updated document
-    );
-
-    if (!updatedTask) {
-      return res.status(404).json({ error: "Task not found." });
-    }
-
-    res.status(200).json({ message: "Task updated successfully!", updatedTask });
-  } catch (error) {
-    console.error("Error updating task:", error);
-    res.status(500).json({ error: "Internal server error." });
-  }
-});
-
 module.exports = router;
