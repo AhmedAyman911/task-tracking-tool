@@ -26,7 +26,28 @@ router.get('/tasks', async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+//update sprint number
+router.put('/tasks/:id', async (req, res) => {
+  const { id } = req.params;
+  const { sprint } = req.body;
 
+  try {
+    const updatedTask = await SprintModel.findByIdAndUpdate(
+      id,
+      { sprint },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // DELETE: Delete a sprint task
 router.delete("/delete/:id", async (req, res) => {

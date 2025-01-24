@@ -14,6 +14,27 @@ import { Link } from "react-router-dom";
 const ScrumTimeline = () => {
   const [sprints, setSprints] = useState([]);
   const projectId = localStorage.getItem("projectId");
+  const [tasks, setTasks] = useState([]); // All available tasks
+  const [selectedTask, setSelectedTask] = useState(""); // Task selected from dropdown
+  const [showDropdown, setShowDropdown] = useState(null);
+  const availableTasks = tasks.filter(
+    (task) => !task.sprint && task.projectId === projectId
+  );
+   // Controls dropdown visibility
+  const fetchTasks = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/sprints/tasks");
+      setTasks(response.data);
+      availableTasks;
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
 
   const fetchSprints = async () => {
     const storedProjectId = localStorage.getItem("projectId");
@@ -50,20 +71,41 @@ const ScrumTimeline = () => {
     setSprints((prevSprints) => [...prevSprints, newSprint]);
   };
 
-  const addTaskFields = (sprintIndex) => {
-    setSprints((prevSprints) =>
-      prevSprints.map((sprint, index) =>
-        index === sprintIndex
-          ? {
-            ...sprint,
-            tasks: [
-              ...sprint.tasks,
-              { role: "", name: "", from: null, to: null, isNew: true },
-            ],
-          }
-          : sprint
-      )
-    );
+  const addTaskToSprint = async (sprintIndex) => {
+    if (!selectedTask) {
+      alert("Please select a task to add!");
+      return;
+    }
+
+    // Get the selected sprint's number
+    const sprintNumber = sprintIndex + 1;
+
+    try {
+      // Update the task's sprint attribute in the backend
+      await axios.put(`http://localhost:3001/sprints/tasks/${selectedTask}`, {
+        sprint: sprintNumber,
+      });
+
+      // Update the UI: add the task to the sprint and re-fetch tasks
+      setSprints((prevSprints) =>
+        prevSprints.map((sprint, index) =>
+          index === sprintIndex
+            ? {
+              ...sprint,
+              tasks: [...sprint.tasks, tasks.find((task) => task._id === selectedTask)],
+            }
+            : sprint
+        )
+      );
+
+      // Reset dropdown
+      setSelectedTask("");
+      setShowDropdown(null);
+      fetchSprints();
+      fetchTasks();
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
   const handleTaskChange = (sprintIndex, taskIndex, key, value) => {
@@ -108,7 +150,6 @@ const ScrumTimeline = () => {
       alert("Failed to save task. Please try again later.");
     }
   };
-
   const deleteTask = async (sprintIndex, taskIndex, taskID) => {
     const task = sprints[sprintIndex].tasks[taskIndex];
 
@@ -126,10 +167,6 @@ const ScrumTimeline = () => {
       setSprints(updatedSprints);
     }
   };
-
-
-
-
   const deleteSprint = async (sprintIndex) => {
     const sprint = sprints[sprintIndex];
 
@@ -141,6 +178,18 @@ const ScrumTimeline = () => {
       alert("Failed to delete sprint. Please try again later.");
     }
   };
+  const resetSprint = async (taskId) => {
+    try {
+      axios.put(`http://localhost:3001/sprints/tasks/${taskId}`, {
+        sprint: 0, 
+      });
+      fetchSprints();
+      fetchTasks();
+    } catch (error) {
+      console.error("Error resetting sprint:", error);
+    }
+  };
+  
 
   return (
     <div className="bg-white h-screen">
@@ -199,8 +248,11 @@ const ScrumTimeline = () => {
                 <div className="flex justify-between items-center">
                   <h2 className="text-lg font-semibold">{sprint?.name || `Sprint ${sprintIndex + 1}`}</h2>
                   <div>
+                    {/* Toggle dropdown for task selection */}
                     <button
-                      onClick={() => addTaskFields(sprintIndex)}
+                      onClick={() =>
+                        setShowDropdown(showDropdown === sprintIndex ? null : sprintIndex)
+                      }
                       className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700 mr-2"
                     >
                       <FontAwesomeIcon icon={faPlus} /> Add Task
@@ -208,78 +260,60 @@ const ScrumTimeline = () => {
                   </div>
                 </div>
 
+                {/* Task Dropdown */}
+                {showDropdown === sprintIndex && (
+                  <div className="mt-4">
+                    <select
+                      value={selectedTask}
+                      onChange={(e) => setSelectedTask(e.target.value)}
+                      className="p-2 border rounded w-full"
+                    >
+                      <option value="">Select a Task</option>
+                      {availableTasks.map((task) => (
+                        <option key={task._id} value={task._id}>
+                          {task.task_name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => addTaskToSprint(sprintIndex)}
+                      className="bg-green-500 text-white px-4 py-2 rounded mt-2 hover:bg-green-700"
+                    >
+                      Add Task to Sprint
+                    </button>
+                  </div>
+                )}
+
+                {/* Display Tasks in the Sprint */}
                 {sprint?.tasks && sprint.tasks.length > 0 ? (
                   sprint.tasks.map((task, taskIndex) => (
                     <div key={taskIndex} className="space-y-2">
-                      {task.isNew ? (
+                      <div className="flex justify-between items-center p-2 border-b border-gray-400">
                         <div>
-                          <div className="flex space-x-2">
-                            <select
-                              value={task.role}
-                              onChange={(e) =>
-                                handleTaskChange(sprintIndex, taskIndex, "role", e.target.value)
-                              }
-                              className="p-2 border rounded w-1/4"
-                            >
-                              <option value="">Select Role</option>
-                              <option value="Frontend Developer">Frontend Developer</option>
-                              <option value="Backend Developer">Backend Developer</option>
-                              <option value="Tester">Tester</option>
-                              <option value="UI/UX Designer">UI/UX Designer</option>
-                            </select>
-                            <input
-                              type="text"
-                              value={task.name || ""}
-                              onChange={(e) =>
-                                handleTaskChange(sprintIndex, taskIndex, "name", e.target.value)
-                              }
-                              className="w-2/4 p-2 border rounded"
-                              placeholder="Task name..."
-                            />
-                          </div>
-                          <div className="flex space-x-4">
-                            <DatePicker
-                              selected={task.from || null}
-                              onChange={(date) =>
-                                handleTaskChange(sprintIndex, taskIndex, "from", date)
-                              }
-                              className="w-full p-2 border rounded"
-                              placeholderText="From"
-                            />
-                            <DatePicker
-                              selected={task.to || null}
-                              onChange={(date) =>
-                                handleTaskChange(sprintIndex, taskIndex, "to", date)
-                              }
-                              className="w-full p-2 border rounded"
-                              placeholderText="To"
-                            />
-                          </div>
+                          <p>
+                            <strong>Task Name:</strong> {task.task_name || "No Task Name"}
+                          </p>
+                          <p>
+                            <strong>Role:</strong> {task.role || "No Role"}
+                          </p>
+                          <p>
+                            <strong>From:</strong>{" "}
+                            {task.from ? new Date(task.from).toLocaleDateString() : "Not Set"}
+                          </p>
+                          <p>
+                            <strong>To:</strong>{" "}
+                            {task.to ? new Date(task.to).toLocaleDateString() : "Not Set"}
+                          </p>
+                        </div>
+                        <div className="flex space-x-2">
                           <button
-                            onClick={() => saveTask(sprintIndex, taskIndex)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            onClick={() => resetSprint(task._id)}
+                            className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
                           >
-                            Save
+                            <FontAwesomeIcon icon={faTrash} />
                           </button>
                         </div>
-                      ) : (
-                        <div className="flex justify-between items-center p-2 border-b border-gray-400">
-                          <div>
-                            <p><strong>Task Name:</strong> {task.task_name || "No Task Name"}</p>
-                            <p><strong>Role:</strong> {task.role || "No Role"}</p>
-                            <p><strong>From:</strong> {task.from ? new Date(task.from).toLocaleDateString() : "Not Set"}</p>
-                            <p><strong>To:</strong> {task.to ? new Date(task.to).toLocaleDateString() : "Not Set"}</p>
-                          </div>
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => deleteTask(sprintIndex, taskIndex, task._id)}
-                              className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                      </div>
                     </div>
                   ))
                 ) : (

@@ -4,42 +4,57 @@ import "./backlog.css";
 import { Link } from "react-router-dom";
 
 const Backlog = () => {
+  const projectId = localStorage.getItem("projectId");
   const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [formData, setFormData] = useState({
+    sprint: "",
+    task_name: "",
+    role: "",
+    from: "",
+    to: "",
+    projectId: projectId,
+    description: "",
+    priority: "Medium", // Default priority
+  });
   const [tableData, setTableData] = useState([]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   // Fetch backlog data from the server
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/backlog/")
-      .then((response) => {
-        setTableData(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching issues:", error);
-      });
+    const storedProjectId = localStorage.getItem("projectId");
+    if (storedProjectId) {
+      axios
+        .get(`http://localhost:3001/sprints/tasks?projectId=${storedProjectId}`)
+        .then((response) => {
+          setTableData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching issues:", error);
+        });
+    }
   }, []);
 
   // Handle form submission for adding backlog issues
   const handleBacklogSubmit = (e) => {
     e.preventDefault();
+    const payload = {
+      sprint: "",
+      task_name: formData.task_name,
+      role: formData.role,
+      from: formData.from,
+      to: formData.to,
+      projectId: projectId,
+      description: formData.description,
+      priority: formData.priority,
+    };
     axios
-      .post("http://localhost:3001/backlog/add", {
-        title,
-        description,
-        priority,
-        dueDate,
-      })
+      .post("http://localhost:3001/sprints/", payload)
       .then((response) => {
         setTableData((prevData) => [...prevData, response.data]);
         setShowForm(false); // Close the form
-        setTitle("");
-        setDescription("");
-        setPriority("");
-        setDueDate("");
       })
       .catch((error) => {
         console.error("Error adding issue:", error);
@@ -70,18 +85,18 @@ const Backlog = () => {
       <div className="sidebar">
         <h2>Workio</h2>
         <ul>
-        <li>
-          <Link to="/backlog">
-            <img src="client/src/assets/backlog.png" alt="Board Icon" className="sidebar-icon" /> Backlog
-          </Link>
-        </li>
-        <li>
-          <Link to="/scrumtime">
-            <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
-          </Link>
-        </li>
-          
-         
+          <li>
+            <Link to="/backlog">
+              <img src="client/src/assets/backlog.png" alt="Board Icon" className="sidebar-icon" /> Backlog
+            </Link>
+          </li>
+          <li>
+            <Link to="/scrumtime">
+              <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
+            </Link>
+          </li>
+
+
         </ul>
       </div>
 
@@ -131,77 +146,151 @@ const Backlog = () => {
               + Create issue
             </button>
             {showForm && (
-              <form onSubmit={handleBacklogSubmit} className="backlog-form">
-                <h2>Create New Issue</h2>
-                <label>
-                  Title
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                  />
-                </label>
-                <label>
-                  Description
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  ></textarea>
-                </label>
-                <label>
-                  Priority
-                  <input
-                    type="text"
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                  />
-                </label>
-                <label>
-                  Due Date
-                  <input
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                  />
-                </label>
-                <div className="form-actions">
-                  <button type="button" onClick={() => setShowForm(false)}>
-                    Cancel
-                  </button>
-                  <button type="submit">Add to Backlog</button>
+              <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+                  <h2 className="text-lg font-bold mb-4">Create New Issue</h2>
+                  <form onSubmit={handleBacklogSubmit}>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Task Name</label>
+                      <input
+                        type="text"
+                        name="task_name"
+                        value={formData.task_name}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        placeholder="Task Name"
+                        required
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Role</label>
+                      <select
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        required
+                      >
+                        <option value="">Select Role</option>
+                        <option value="Frontend Developer">Frontend Developer</option>
+                        <option value="Backend Developer">Backend Developer</option>
+                        <option value="Tester">Tester</option>
+                        <option value="UI/UX Designer">UI/UX Designer</option>
+                      </select>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">From</label>
+                      <input
+                        type="date"
+                        name="from"
+                        value={formData.from}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        required
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">To</label>
+                      <input
+                        type="date"
+                        name="to"
+                        value={formData.to}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        required
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Description</label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        placeholder="Task Description"
+                        required
+                      ></textarea>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Priority</label>
+                      <select
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                      >
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                      </select>
+                    </div>
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowForm(false)}
+                        className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             )}
           </div>
         </div>
 
         {/* Backlog Section */}
-        <div className="backlog-section">
-          <h2>Backlog ({tableData.length} issues)</h2>
+        <div className="backlog-section p-6 bg-gray-50 rounded shadow-lg">
+          <h2 className="text-2xl font-semibold mb-4">
+            Backlog ({tableData.length} issues)
+          </h2>
           {tableData.length > 0 ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>Priority</th>
-                  <th>Due Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((issue, index) => (
-                  <tr key={index}>
-                    <td>{issue.title}</td>
-                    <td>{issue.description}</td>
-                    <td>{issue.priority}</td>
-                    <td>{issue.dueDate ? new Date(issue.dueDate).toLocaleDateString() : "N/A"}</td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+                <thead>
+                  <tr className="bg-blue-500 text-white">
+                    <th className="text-left px-4 py-2 font-medium">Title</th>
+                    <th className="text-left px-4 py-2 font-medium">Description</th>
+                    <th className="text-left px-4 py-2 font-medium">Priority</th>
+                    <th className="text-left px-4 py-2 font-medium">Due Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {tableData.map((issue, index) => (
+                    <tr
+                      key={index}
+                      className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"
+                        } hover:bg-blue-100`}
+                    >
+                      <td className="px-4 py-2 border-t">{issue.task_name}</td>
+                      <td className="px-4 py-2 border-t">{issue.description}</td>
+                      <td
+                        className={`px-4 py-2 border-t font-semibold ${issue.priority === "High"
+                            ? "text-red-500"
+                            : issue.priority === "Medium"
+                              ? "text-yellow-500"
+                              : "text-green-500"
+                          }`}
+                      >
+                        {issue.priority}
+                      </td>
+                      <td className="px-4 py-2 border-t">
+                        {issue.to ? new Date(issue.to).toLocaleDateString() : "N/A"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            <p>Your backlog is empty</p>
+            <p className="text-gray-500 mt-4">Your backlog is empty.</p>
           )}
         </div>
       </div>

@@ -14,8 +14,11 @@ router.post('/add', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+    const { projectId } = req.query;
     try {
-        const items = await BacklogItem.find();
+        const items = projectId
+              ? await BacklogItem.find({ projectId })
+              : await BacklogItem.find();
         res.status(200).json(items);
     } catch (err) {
         res.status(500).json({ error: err.message });

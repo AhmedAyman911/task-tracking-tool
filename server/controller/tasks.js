@@ -12,11 +12,11 @@ router.post('/', async (req, res) => {
   }
 });
 router.get('/', async (req, res) => {
-  const { projectId } = req.query; // Use query parameter to filter by projectId
+  const { projectId } = req.query;
   try {
     const tasks = projectId
-      ? await TaskModel.find({ projectId }) // Filter tasks by projectId
-      : await TaskModel.find(); // Return all tasks if no projectId provided
+      ? await TaskModel.find({ projectId })
+      : await TaskModel.find();
 
     res.status(200).json(tasks);
   } catch (error) {
