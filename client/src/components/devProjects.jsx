@@ -41,7 +41,7 @@ const DevProjects = () => {
         if (projectType === "Kanban") {
             navigate(`/devBoard`);
         } else if (projectType === "Scrum") {
-            navigate(`/scrumtime`);
+            navigate(`/devSprints`);
         }
     };
 
