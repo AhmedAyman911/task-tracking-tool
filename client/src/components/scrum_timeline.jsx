@@ -1,21 +1,15 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash, faPen } from "@fortawesome/free-solid-svg-icons";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import timelineImage from "../assets/timeline.jpg";
-import backlogImage from "../assets/backlog.jpg";
-import codeImage from "../assets/code.jpg";
-import spmImage from "../assets/spm.jpg";
-import { Link } from "react-router-dom";
-
-
+import Navbar from "./Nav";
+import SideBar from "./ScrumSide";
 const ScrumTimeline = () => {
   const [sprints, setSprints] = useState([]);
   const projectId = localStorage.getItem("projectId");
-  const [tasks, setTasks] = useState([]); // All available tasks
-  const [selectedTask, setSelectedTask] = useState(""); // Task selected from dropdown
+  const [tasks, setTasks] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(""); 
   const [showDropdown, setShowDropdown] = useState(null);
   const availableTasks = tasks.filter(
     (task) => !task.sprint && task.projectId === projectId
@@ -23,8 +17,8 @@ const ScrumTimeline = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
   const openEditModal = (task) => {
-    setCurrentTask(task); // Set the task to be edited
-    setShowModal(true); // Show the modal
+    setCurrentTask(task); 
+    setShowModal(true); 
   };
   const fetchTasks = async () => {
     try {
@@ -208,41 +202,9 @@ const ScrumTimeline = () => {
 
   return (
     <div className="bg-white h-screen">
-      <nav className="navbar">
-        <div className="navbar-brand">Workio</div>
-        <div className="navbar-links">
-          <a href="#">Your work</a>
-          <a href="/choose">Projects</a>
-          <a href="#">Filters</a>
-          <a href="#">Dashboards</a>
-          <a href="#">Teams</a>
-          <a href="#">Plan</a>
-          <a href="#">Apps</a>
-        </div>
-        <div className="navbar-actions">
-          <span className="notification-icon">🔔</span>
-        </div>
-      </nav>
-
+      <Navbar/>
+      <SideBar/>
       <div className="flex" style={{ marginTop: '100px', marginLeft: '230px' }}>
-        <div className="sidebar">
-          <h2>Workio</h2>
-          <ul>
-            <li>
-              <Link to="/backlog">
-                <img src="client/src/assets/backlog.png" alt="Board Icon" className="sidebar-icon" /> Backlog
-              </Link>
-            </li>
-            <li>
-              <Link to="/scrumtime">
-                <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
-              </Link>
-            </li>
-
-
-          </ul>
-        </div>
-
         <main className="flex-1 p-6">
           <div className="flex justify-between items-center">
             <h1 className="text-xl font-bold mb-6">Sprints</h1>
@@ -262,9 +224,24 @@ const ScrumTimeline = () => {
               >
                 {/* Sprint Header */}
                 <div className="flex justify-between items-center border-b pb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {sprint?.name || `Sprint ${sprintIndex + 1}`}
-                  </h2>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      {sprint?.name || `Sprint ${sprintIndex + 1}`}
+                    </h2>
+                    {sprint?.tasks && sprint.tasks.length > 0 && (
+                      <p className="text-sm text-gray-600 mt-2">
+                        <strong>Start Date:</strong>{" "}
+                        {new Date(
+                          Math.min(...sprint.tasks.map((task) => new Date(task.from).getTime()))
+                        ).toLocaleDateString()}
+                        {" - "}
+                        <strong>End Date:</strong>{" "}
+                        {new Date(
+                          Math.max(...sprint.tasks.map((task) => new Date(task.to).getTime()))
+                        ).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
                   <div>
                     <button
                       onClick={() =>
@@ -276,7 +253,6 @@ const ScrumTimeline = () => {
                     </button>
                   </div>
                 </div>
-
                 {/* Task Dropdown */}
                 {showDropdown === sprintIndex && (
                   <div className="mt-4">
@@ -417,19 +393,21 @@ const ScrumTimeline = () => {
                 {sprint?.tasks && sprint.tasks.length > 0 ? (
                   sprint.tasks.map((task, taskIndex) => (
                     <div key={taskIndex} className="space-y-2">
-                      <div className="flex justify-between items-center p-2 border-b border-gray-400">
-                        <div>
+                      <div className="flex justify-between items-center p-4 border-b border-gray-300 bg-gray-100 rounded-lg hover:shadow-md transition-shadow duration-200">
+                        <div className="space-y-2">
                           <p>
                             <strong>Task Name:</strong> {task.task_name || "No Task Name"}
                           </p>
                           <p>
-                            <strong>Description:</strong> {task.description || "No Description Avilable"}
+                            <strong>Description:</strong>{" "}
+                            {task.description || "No Description Available"}
                           </p>
                           <p>
                             <strong>Role:</strong> {task.role || "No Role"}
                           </p>
                           <p>
-                            <strong>Assignee:</strong> {task.assignee || "Not Assigned yet"}
+                            <strong>Assignee:</strong>{" "}
+                            {task.assignee || "Not Assigned Yet"}
                           </p>
                           <p>
                             <strong>From:</strong>{" "}
@@ -450,20 +428,34 @@ const ScrumTimeline = () => {
                               }[task.priority || "Default"]
                                 }`}
                             >
-                              {task.priority || "Not Set yet"}
+                              {task.priority || "Not Set Yet"}
+                            </span>
+                          </p>
+                          <p>
+                            <strong>Status:</strong>{" "}
+                            <span
+                              className={`${{
+                                Done: "text-green-500 font-bold",
+                                "In Progress": "text-yellow-500 font-bold",
+                                "To Do": "text-red-500 font-bold",
+                                Default: "text-gray-500",
+                              }[task.status || "Default"]
+                                }`}
+                            >
+                              {task.status || "Not Set"}
                             </span>
                           </p>
                         </div>
                         <div className="flex space-x-2">
                           <button
                             onClick={() => resetSprintTask(task._id)}
-                            className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
+                            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition-all duration-200"
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </button>
                           <button
                             onClick={() => openEditModal(task)}
-                            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-all duration-200"
                           >
                             <FontAwesomeIcon icon={faPen} />
                           </button>
@@ -474,6 +466,7 @@ const ScrumTimeline = () => {
                 ) : (
                   <p className="text-gray-600">No tasks added yet.</p>
                 )}
+
               </div>
             ))}
           </div>

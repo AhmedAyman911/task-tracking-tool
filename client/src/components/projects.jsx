@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Nav";
 const Projects = () => {
     const [projects, setProjects] = useState([]); 
     const [loading, setLoading] = useState(true); 
@@ -47,7 +48,8 @@ const Projects = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Manager Projects</h1>
+            <Navbar/>
+            <h1 className="text-2xl font-bold mb-4 mt-16">Manager Projects</h1>
             {projects.length === 0 ? (
                 <p>No projects found for this manager.</p>
             ) : (

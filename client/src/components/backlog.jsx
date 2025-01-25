@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./backlog.css";
-import { Link } from "react-router-dom";
-
+import SideBar from "./ScrumSide";
+import Navbar from "./Nav";
 const Backlog = () => {
   const projectId = localStorage.getItem("projectId");
   const [currentTask, setCurrentTask] = useState(null);
@@ -17,7 +17,7 @@ const Backlog = () => {
     description: "",
     priority: "Medium",
     assignee: "",
-    status:"",
+    status: "",
   });
   const [tableData, setTableData] = useState([]);
   const handleChange = (e) => {
@@ -37,7 +37,7 @@ const Backlog = () => {
       });
   }, []);
   const handleAssigneeChange = (e) => {
-    const selectedId = e.target.value; // This is the _id from the dropdown
+    const selectedId = e.target.value;
     const selectedUser = users.find((user) => user._id === selectedId);
 
     if (selectedUser) {
@@ -124,46 +124,8 @@ const Backlog = () => {
   return (
     <div className="app">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">Workio</div>
-        <div className="navbar-links">
-          <a href="#">Your work</a>
-          <a href="/choose">Projects</a>
-          <a href="#">Filters</a>
-          <a href="#">Dashboards</a>
-          <a href="#">Teams</a>
-          <a href="#">Plan</a>
-          <a href="#">Apps</a>
-        </div>
-        <div className="navbar-actions">
-          <a href="#">Login/Signup</a>
-          <span className="notification-icon">🔔</span>
-        </div>
-      </nav>
-
-      {/* Sidebar */}
-      <div className="sidebar">
-        <h2>Workio</h2>
-        <ul>
-          <li>
-            <Link to="/backlog">
-              <img src="client/src/assets/backlog.png" alt="Board Icon" className="sidebar-icon" /> Backlog
-            </Link>
-          </li>
-          <li>
-            <Link to="/scrumtime">
-              <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
-            </Link>
-          </li>
-          <li>
-            <Link to="/scrumDashboard">
-              <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Dashboard
-            </Link>
-          </li>
-
-        </ul>
-      </div>
-
+      <Navbar/>
+      <SideBar/>
       {/* Main Content */}
       <div className="content">
         {/* Backlog Header */}
@@ -357,6 +319,9 @@ const Backlog = () => {
                     <th className="text-left px-4 py-2 font-medium">Description</th>
                     <th className="text-left px-4 py-2 font-medium">Priority</th>
                     <th className="text-left px-4 py-2 font-medium">Due Date</th>
+                    <th className="text-left px-4 py-2 font-medium">Role</th>
+                    <th className="text-left px-4 py-2 font-medium">Assignee</th>
+                    <th className="text-left px-4 py-2 font-medium">Status</th>
                     <th className="text-center px-4 py-2 font-medium">Actions</th>
                   </tr>
                 </thead>
@@ -371,16 +336,30 @@ const Backlog = () => {
                       <td className="px-4 py-2 border-t">{issue.description}</td>
                       <td
                         className={`px-4 py-2 border-t font-semibold ${issue.priority === "High"
-                          ? "text-red-500"
-                          : issue.priority === "Medium"
-                            ? "text-yellow-500"
-                            : "text-green-500"
+                            ? "text-red-500"
+                            : issue.priority === "Medium"
+                              ? "text-yellow-500"
+                              : "text-green-500"
                           }`}
                       >
                         {issue.priority}
                       </td>
                       <td className="px-4 py-2 border-t">
                         {issue.to ? new Date(issue.to).toLocaleDateString() : "N/A"}
+                      </td>
+                      <td className="px-4 py-2 border-t">{issue.role}</td>
+                      <td className="px-4 py-2 border-t">
+                        {issue.assignee || "Unassigned"}
+                      </td>
+                      <td
+                        className={`px-4 py-2 border-t ${issue.status === "Done"
+                            ? "text-green-500 font-bold"
+                            : issue.status === "In Progress"
+                              ? "text-yellow-500"
+                              : "text-red-500"
+                          }`}
+                      >
+                        {issue.status}
                       </td>
                       <td className="px-4 py-2 border-t text-center">
                         <button
@@ -404,6 +383,7 @@ const Backlog = () => {
           ) : (
             <p className="text-gray-500 mt-4">Your backlog is empty.</p>
           )}
+
           {showModal && currentTask && (
             <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
               <div className="bg-white p-6 rounded shadow-lg w-1/2">
@@ -434,6 +414,30 @@ const Backlog = () => {
                       }
                       className="w-full p-2 border rounded"
                     ></textarea>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700">From</label>
+                    <input
+                      type="date"
+                      value={currentTask.from}
+                      onChange={(e) =>
+                        setCurrentTask({ ...currentTask, from: e.target.value })
+                      }
+                      className="w-full border rounded p-2"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700">To</label>
+                    <input
+                      type="date"
+                      value={currentTask.to}
+                      onChange={(e) =>
+                        setCurrentTask({ ...currentTask, to: e.target.value })
+                      }
+                      className="w-full border rounded p-2"
+                      required
+                    />
                   </div>
                   <div className="mb-4">
                     <label className="block text-gray-700">Priority</label>
@@ -496,20 +500,20 @@ const Backlog = () => {
                     </select>
                   </div>
                   <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700">Status</label>
-                      <select
+                    <label className="block text-sm font-medium text-gray-700">Status</label>
+                    <select
                       value={currentTask.status || ""}
                       onChange={(e) =>
                         setCurrentTask({ ...currentTask, status: e.target.value })
                       }
                       className="w-full p-2 border rounded"
                     >
-                        <option value="">Select status</option>
-                        <option value="To Do">To Do</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Done">Done</option>
-                      </select>
-                    </div>
+                      <option value="">Select status</option>
+                      <option value="To Do">To Do</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Done">Done</option>
+                    </select>
+                  </div>
                   <div className="flex justify-end">
                     <button
                       type="button"

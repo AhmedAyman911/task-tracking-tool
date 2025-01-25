@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-
+import Navbar from "./Nav";
 import searchImage from "../assets/search.jpg";
-import { Link } from "react-router-dom";
-
+import SideBar from "./KanbanSide"
 import axios from "axios";
 
 const KanbanBoard = () => {
@@ -26,44 +25,9 @@ const KanbanBoard = () => {
   return (
     <div className="bg-white h-screen">
       {/* Header */}
-      <nav className="navbar">
-        <div className="navbar-brand">Workio</div>
-        <div className="navbar-links">
-          <a href="#">Your work</a>
-          <a href="/choose">Projects</a>
-          <a href="#">Filters</a>
-          <a href="#">Dashboards</a>
-          <a href="#">Teams</a>
-          <a href="#">Plan</a>
-          <a href="#">Apps</a>
-        </div>
-        <div className="navbar-actions">
-          <span className="notification-icon">🔔</span>
-        </div>
-      </nav>
+      <Navbar />
 
-      {/* Sidebar */}
-      <div className="sidebar">
-        <h2>Workio</h2>
-        <ul>
-        <li>
-          <Link to="/goal">
-            <img src="client/src/assets/goals.jpg" alt="Board Icon" className="sidebar-icon" /> Goal
-          </Link>
-        </li>
-        <li>
-          <Link to="/kanbanBoard">
-            <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
-          </Link>
-        </li>
-          <li>
-            <Link to ="/ListKanban">
-              <img src="client/src/assets/list.jpg" alt="List Icon" className="sidebar-icon" /> List
-              </Link>
-          </li>
-         
-        </ul>
-      </div>
+      <SideBar/>
 
 
       {/* Main Content */}

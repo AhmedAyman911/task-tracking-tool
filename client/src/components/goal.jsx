@@ -1,52 +1,12 @@
 // src/components/goal.jsx
 import './goal.css';
-import { Link } from "react-router-dom";
-
+import SideBar from "./KanbanSide"
+import Navbar from "./Nav";
 const Goal = () => {
   return (
     <div className="app">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">Workio</div>
-        <div className="navbar-links">
-          <a href="#">Your work</a>
-          <a href="/choose">Projects</a>
-          <a href="#">Filters</a>
-          <a href="#">Dashboards</a>
-          <a href="#">Teams</a>
-          <a href="#">Plan</a>
-          <a href="#">Apps</a>
-        </div>
-        <div className="navbar-actions">
-          <a href="#">Login/Signup</a>
-          <span className="notification-icon">🔔</span>
-        </div>
-      </nav>
-
-      {/* Sidebar */}
-       {/* Sidebar */}
-       <div className="sidebar">
-        <h2>Workio</h2>
-        <ul>
-        <li>
-          <Link to="/goal">
-            <img src="client/src/assets/goals.jpg" alt="Board Icon" className="sidebar-icon" /> Goal
-          </Link>
-        </li>
-        <li>
-          <Link to="/kanbanBoard">
-            <img src="src/assets/board.png" alt="Board Icon" className="sidebar-icon" /> Board
-          </Link>
-        </li>
-          <li>
-            <Link to ="/ListKanban">
-              <img src="client/src/assets/list.jpg" alt="List Icon" className="sidebar-icon" /> List
-              </Link>
-          </li>
-         
-        </ul>
-      </div>
-
+      <Navbar/>
+      <SideBar/>
       {/* Main Content */}
       <div className="goal-container">
         <header className="header">

@@ -1,25 +1,35 @@
-import axios from 'axios';
-import { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { Alert, Snackbar } from '@mui/material';
+import axios from "axios";
+import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { Alert, Snackbar } from "@mui/material";
 
 const AuthPage = () => {
   const [isSignup, setIsSignup] = useState(false);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <div className="flex justify-center mb-6">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600"
+    >
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className="flex justify-center mb-6 border-b pb-4">
           <button
             onClick={() => setIsSignup(false)}
-            className={`px-4 py-2 text-sm font-semibold ${!isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+            className={`px-6 py-2 text-lg font-bold transition ${
+              !isSignup
+                ? "text-blue-600 border-b-4 border-blue-600"
+                : "text-gray-500"
+            }`}
           >
             Login
           </button>
           <button
             onClick={() => setIsSignup(true)}
-            className={`px-4 py-2 text-sm font-semibold ${isSignup ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}
+            className={`px-6 py-2 text-lg font-bold transition ${
+              isSignup
+                ? "text-blue-600 border-b-4 border-blue-600"
+                : "text-gray-500"
+            }`}
           >
             Sign Up
           </button>
@@ -33,69 +43,67 @@ const AuthPage = () => {
 const LoginForm = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState('error');
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post('http://localhost:3001/users/login', { password, email })
+      .post("http://localhost:3001/users/login", { password, email })
       .then((response) => {
         const { token, user } = response.data;
         if (token && user) {
-          localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(user));
-          if (user.role === 'manager') {
-            navigate('/choose');
-          } else {
-            navigate('/devBoard'); // Navigate to the choose.jsx page
-          }
-          setAlertMessage('Login successful!');
-          setAlertSeverity('success');
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate(user.role === "manager" ? "/Mprojects" : "/DevProjects");
+          setAlertMessage("Login successful!");
+          setAlertSeverity("success");
           setAlertOpen(true);
         } else {
-          setAlertMessage('Token or user data missing in response.');
-          setAlertSeverity('error');
+          setAlertMessage("Token or user data missing in response.");
+          setAlertSeverity("error");
           setAlertOpen(true);
         }
       })
-      .catch((error) => {
-        setAlertMessage('Error logging in. Please check your credentials and try again.');
-        setAlertSeverity('error');
+      .catch(() => {
+        setAlertMessage(
+          "Error logging in. Please check your credentials and try again."
+        );
+        setAlertSeverity("error");
         setAlertOpen(true);
       });
   };
 
-  const handleClose = () => {
-    setAlertOpen(false);
-  };
+  const handleClose = () => setAlertOpen(false);
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        Welcome Back
+      </h2>
       <div>
-        <label className="block text-gray-700">Email</label>
+        <label className="block text-gray-700 font-semibold">Email</label>
         <input
           type="email"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Your Email"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter your email"
           required
           value={email}
-          onChange={(ev) => setEmail(ev.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </div>
       <div className="relative">
-        <label className="block text-gray-700">Password</label>
+        <label className="block text-gray-700 font-semibold">Password</label>
         <input
-          type={showPassword ? 'text' : 'password'}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Password"
+          type={showPassword ? "text" : "password"}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter your password"
           required
           value={password}
-          onChange={(ev) => setPassword(ev.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <button
           type="button"
@@ -105,22 +113,22 @@ const LoginForm = () => {
           {showPassword ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition"
+      >
+        Login
+      </button>
       <Snackbar
         open={alertOpen}
         autoHideDuration={2500}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: "100%" }}>
           {alertMessage}
         </Alert>
       </Snackbar>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-      >
-        Login
-      </button>
     </form>
   );
 };
@@ -128,70 +136,71 @@ const LoginForm = () => {
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState('');
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState('error');
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post('http://localhost:3001/users/signup', { name, password, email, role })
+      .post("http://localhost:3001/users/signup", { name, password, email, role })
       .then(() => {
-        setAlertMessage('Signup successful!');
-        setAlertSeverity('success');
+        setAlertMessage("Signup successful!");
+        setAlertSeverity("success");
         setAlertOpen(true);
-        navigate('/'); // Navigate to the login page after successful 
-        
+        navigate("/");
       })
       .catch((err) => {
-        setAlertMessage(err.response?.data.message || 'Error signing up. Please try again.');
-        setAlertSeverity('error');
+        setAlertMessage(
+          err.response?.data.message || "Error signing up. Please try again."
+        );
+        setAlertSeverity("error");
         setAlertOpen(true);
       });
   };
 
-  const handleClose = () => {
-    setAlertOpen(false);
-  };
+  const handleClose = () => setAlertOpen(false);
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+        Create Account
+      </h2>
       <div>
-        <label className="block text-gray-700">Name</label>
+        <label className="block text-gray-700 font-semibold">Name</label>
         <input
           type="text"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Your Name"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter your name"
           required
           value={name}
-          onChange={(ev) => setName(ev.target.value)}
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div>
-        <label className="block text-gray-700">Email</label>
+        <label className="block text-gray-700 font-semibold">Email</label>
         <input
           type="email"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Your Email"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter your email"
           required
           value={email}
-          onChange={(ev) => setEmail(ev.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </div>
       <div className="relative">
-        <label className="block text-gray-700">Password</label>
+        <label className="block text-gray-700 font-semibold">Password</label>
         <input
-          type={showPassword ? 'text' : 'password'}
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="Password"
+          type={showPassword ? "text" : "password"}
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter your password"
           required
           value={password}
-          onChange={(ev) => setPassword(ev.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <button
           type="button"
@@ -202,12 +211,12 @@ const SignupForm = () => {
         </button>
       </div>
       <div>
-        <label className="block text-gray-700">Role</label>
+        <label className="block text-gray-700 font-semibold">Role</label>
         <select
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
           required
           value={role}
-          onChange={(ev) => setRole(ev.target.value)}
+          onChange={(e) => setRole(e.target.value)}
         >
           <option value="">Select Role</option>
           <option value="manager">Manager</option>
@@ -218,7 +227,7 @@ const SignupForm = () => {
       </div>
       <button
         type="submit"
-        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+        className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition"
       >
         Sign Up
       </button>
@@ -226,9 +235,9 @@ const SignupForm = () => {
         open={alertOpen}
         autoHideDuration={2500}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={handleClose} severity={alertSeverity} sx={{ width: "100%" }}>
           {alertMessage}
         </Alert>
       </Snackbar>

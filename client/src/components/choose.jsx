@@ -3,7 +3,7 @@ import './choose.css';
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
+import Navbar from "./Nav";
 const Choose = () => {
   const [showModal, setShowModal] = useState(false); // Modal visibility
   const [projectName, setProjectName] = useState("");
@@ -12,7 +12,7 @@ const Choose = () => {
   const [ptype, setPtype] = useState("");
   const decodeToken = (token) => {
     try {
-      const decoded = jwtDecode(token); // jwtDecode is used here
+      const decoded = jwtDecode(token);
       return decoded;
     } catch (error) {
       console.error('Error decoding token:', error);
@@ -77,21 +77,7 @@ const Choose = () => {
   return (
     <div className="choose-page">
       {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">Workio</div>
-        <div className="navbar-links">
-          <a href="/choose">Your work</a>
-          <a href="/Mprojects">Projects</a>
-          <a href="#">Filters</a>
-          <a href="#">Dashboards</a>
-          <a href="#">Teams</a>
-          <a href="#">Plan</a>
-          <a href="#">Apps</a>
-        </div>
-        <div className="navbar-actions">
-          <span className="notification-icon">🔔</span>
-        </div>
-      </nav>
+      <Navbar/>
 
       {/* Main Content */}
       <div className="choose-content">

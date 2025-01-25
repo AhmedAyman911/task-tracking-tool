@@ -8,9 +8,9 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-
+import Navbar from "./Nav";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-
+import SideBar from "./ScrumSide";
 const ScrumGanttChart = () => {
     const [tasks, setTasks] = useState([]);
 
@@ -176,7 +176,7 @@ const ScrumGanttChart = () => {
         labels: [...new Set(tasks.map((task) => task.from))]
             .map((date) => new Date(date))
             .sort((a, b) => a - b) // Sort dates in ascending order
-            .map((date) => date.toISOString().split("T")[0]), // Format to YYYY-MM-DD
+            .map((date) => date.toISOString().split("T")[0]),
         datasets: [
             {
                 label: "Remaining Tasks",
@@ -191,7 +191,7 @@ const ScrumGanttChart = () => {
                 borderColor: "#4caf50",
                 backgroundColor: "rgba(76, 175, 80, 0.2)",
                 fill: true,
-                tension: 0.4, // Smooth the line
+                tension: 0.4,
             },
         ],
     };
@@ -201,10 +201,10 @@ const ScrumGanttChart = () => {
         maintainAspectRatio: false,
         scales: {
             y: {
-                beginAtZero: true, // Start the Y-axis from 0
+                beginAtZero: true,
                 ticks: {
-                    stepSize: 1, // Ensure whole numbers on the Y-axis
-                    precision: 0, // No decimal points
+                    stepSize: 1,
+                    precision: 0,
                 },
                 title: {
                     display: true,
@@ -219,51 +219,53 @@ const ScrumGanttChart = () => {
             },
         },
     };
-
-
-
     return (
+
         <div className="p-6 bg-white shadow rounded">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Scrum Dashboard</h1>
-            {/* Gantt Chart (First Row) */}
-            <div className="bg-white shadow-md rounded-lg p-4 mb-6">
-                <h2 className="text-lg font-bold mb-4">Gantt Chart</h2>
-                <div className="h-80 flex justify-center">
-                    <Line data={data} options={options} />
-                </div>
-            </div>
-
-            {/* Other Charts in Grid */}
-            <div className="grid grid-cols-2 gap-6">
-                {/* Sprint Progress Chart */}
-                <div className="bg-white shadow-md rounded-lg p-4">
-                    <h2 className="text-lg font-bold mb-4">Sprint Progress</h2>
-                    <div className="h-64">
-                        <Bar data={sprintProgressData} options={{ maintainAspectRatio: false }} />
+            <Navbar />
+            <SideBar />
+            <div style={{ marginLeft: '250px' }}>
+                <h1 className="text-3xl font-bold text-gray-800 mb-6 mt-16">Scrum Dashboard</h1>
+                {/* Gantt Chart (First Row) */}
+                <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+                    <h2 className="text-lg font-bold mb-4">Gantt Chart</h2>
+                    <div className="h-80 flex justify-center">
+                        <Line data={data} options={options} />
                     </div>
                 </div>
 
-                {/* Task Priority Distribution */}
-                <div className="bg-white shadow-md rounded-lg p-4">
-                    <h2 className="text-lg font-bold mb-4">Task Priority Distribution</h2>
-                    <div className="h-64">
-                        <Doughnut data={taskPriorityData} options={{ maintainAspectRatio: false }} />
+                {/* Other Charts in Grid */}
+                <div className="grid grid-cols-2 gap-6">
+                    {/* Sprint Progress Chart */}
+                    <div className="bg-white shadow-md rounded-lg p-4">
+                        <h2 className="text-lg font-bold mb-4">Sprint Progress</h2>
+                        <div className="h-64">
+                            <Bar data={sprintProgressData} options={{ maintainAspectRatio: false }} />
+                        </div>
                     </div>
-                </div>
 
-                {/* Assignee Workload */}
-                <div className="bg-white shadow-md rounded-lg p-4">
-                    <h2 className="text-lg font-bold mb-4">Assignee Workload</h2>
-                    <div className="h-64">
-                        <Bar data={assigneeWorkloadData} options={{ maintainAspectRatio: false }} />
+                    {/* Task Priority Distribution */}
+                    <div className="bg-white shadow-md rounded-lg p-4">
+                        <h2 className="text-lg font-bold mb-4">Task Priority Distribution</h2>
+                        <div className="h-64">
+                            <Doughnut data={taskPriorityData} options={{ maintainAspectRatio: false }} />
+                        </div>
                     </div>
-                </div>
 
-                {/* Burndown Chart */}
-                <div className="bg-white shadow-md rounded-lg p-4">
-                    <h2 className="text-xl font-bold mb-4">Burndown Chart</h2>
-                    <div className="h-80">
-                        <Line data={burndownData} options={options2} />
+                    {/* Assignee Workload */}
+                    <div className="bg-white shadow-md rounded-lg p-4">
+                        <h2 className="text-lg font-bold mb-4">Assignee Workload</h2>
+                        <div className="h-64">
+                            <Bar data={assigneeWorkloadData} options={{ maintainAspectRatio: false }} />
+                        </div>
+                    </div>
+
+                    {/* Burndown Chart */}
+                    <div className="bg-white shadow-md rounded-lg p-4">
+                        <h2 className="text-xl font-bold mb-4">Burndown Chart</h2>
+                        <div className="h-80">
+                            <Line data={burndownData} options={options2} />
+                        </div>
                     </div>
                 </div>
             </div>

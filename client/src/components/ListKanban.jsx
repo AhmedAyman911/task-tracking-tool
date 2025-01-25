@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import Navbar from "./Nav";
+import SideBar from "./KanbanSide"
+
 const ListKanban = () => {
     const [tableData, setTableData] = useState([]);
     const [users, setUsers] = useState([]);
     const [id, setId] = useState(null);
-    
-    
+
+
     useEffect(() => {
         axios
             .get("http://localhost:3001/users/team")
@@ -21,11 +23,11 @@ const ListKanban = () => {
     useEffect(() => {
         const storedProjectId = localStorage.getItem("projectId");
         if (storedProjectId) {
-          axios.get(`http://localhost:3001/tasks?projectId=${storedProjectId}`).then((response) => {
-            setTableData(response.data);
-          });
+            axios.get(`http://localhost:3001/tasks?projectId=${storedProjectId}`).then((response) => {
+                setTableData(response.data);
+            });
         }
-      }, []);
+    }, []);
     const [showForm, setShowForm] = useState(false);
     const [type, setType] = useState("");
     const [key, setKey] = useState("");
@@ -45,12 +47,11 @@ const ListKanban = () => {
             setAssignee('');
             setDueDate('');
             setTesting('');
-            setId(null); // Clear the ID
+            setId(null);
         };
         e.preventDefault();
 
         if (id) {
-            // Update existing task
             axios
                 .put(`http://localhost:3001/tasks/${id}`, {
                     type,
@@ -105,12 +106,12 @@ const ListKanban = () => {
     };
 
     const handleAssigneeChange = (e) => {
-        const selectedId = e.target.value; // This is the _id from the dropdown
+        const selectedId = e.target.value;
         const selectedUser = users.find((user) => user._id === selectedId);
 
         if (selectedUser) {
-            setUid(selectedUser._id); // Save the user ID
-            setAssignee(selectedUser.name); // Save the user name
+            setUid(selectedUser._id);
+            setAssignee(selectedUser.name);
         } else {
             console.error("Selected user not found in users array");
         }
@@ -140,106 +141,11 @@ const ListKanban = () => {
     };
 
     return (
-
         <div className="flex h-screen">
             {/* Navbar */}
-            <nav className="bg-[#c6e6fd] px-10 py-4 flex justify-between items-center border-b border-gray-300 fixed top-0 left-0 w-full shadow-md z-50">
-                {/* Brand */}
-                <div className="text-2xl font-bold text-gray-800">
-                    Workio
-                </div>
-
-                {/* Links */}
-                <div className="space-x-6">
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Your work
-                    </a>
-                    <a href="/choose" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Projects
-                    </a>
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Filters
-                    </a>
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Dashboards
-                    </a>
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Teams
-                    </a>
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Plan
-                    </a>
-                    <a href="#" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-                        Apps
-                    </a>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center space-x-4">
-                    <span className="text-2xl cursor-pointer">🔔</span>
-                </div>
-            </nav>
-
+            <Navbar />
             {/* Sidebar */}
-            <div className="fixed top-[57px] mt-2 left-0 h-[calc(100vh-60px)] w-[250px] bg-[#dde6f4] text-black p-5 font-sans shadow-md z-50">
-                <h2 className="text-lg font-bold mb-5">Workio</h2>
-                <ul className="space-y-4">
-                    <li>
-                        <Link
-                            to="/goal"
-                            className="flex items-center text-black text-base no-underline p-2 rounded-md hover:bg-[#0052cc] hover:text-white transition"
-                        >
-                            <img
-                                src="client/src/assets/goals.jpg"
-                                alt="Board Icon"
-                                className="w-6 h-6 mr-2"
-                            />
-                            Goal
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/kanbanBoard"
-                            className="flex items-center text-black text-base no-underline p-2 rounded-md hover:bg-[#0052cc] hover:text-white transition"
-                        >
-                            <img
-                                src="src/assets/board.png"
-                                alt="Board Icon"
-                                className="w-6 h-6 mr-2"
-                            />
-                            Board
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/ListKanban"
-                            className="flex items-center text-black text-base no-underline p-2 rounded-md hover:bg-[#0052cc] hover:text-white transition"
-                        >
-                            <img
-                                src="client/src/assets/list.jpg"
-                                alt="List Icon"
-                                className="w-6 h-6 mr-2"
-                            />
-                            List
-                        </Link>
-                    </li>
-                    <li>
-                        <Link
-                            to="/kanbanDashboard"
-                            className="flex items-center text-black text-base no-underline p-2 rounded-md hover:bg-[#0052cc] hover:text-white transition"
-                        >
-                            <img
-                                src="client/src/assets/list.jpg"
-                                alt="List Icon"
-                                className="w-6 h-6 mr-2"
-                            />
-                            Dashboard
-                        </Link>
-                    </li>
-                </ul>
-            </div>
-
-
+            <SideBar/>
             {/* Main Content */}
             <main className="flex-1 bg-white flex flex-col pt-16" style={{ marginLeft: '250px' }}>
                 {/* Header */}
