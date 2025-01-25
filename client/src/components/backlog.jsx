@@ -16,7 +16,8 @@ const Backlog = () => {
     projectId: projectId,
     description: "",
     priority: "Medium",
-    assignee: ""
+    assignee: "",
+    status:"",
   });
   const [tableData, setTableData] = useState([]);
   const handleChange = (e) => {
@@ -77,7 +78,8 @@ const Backlog = () => {
       projectId: projectId,
       description: formData.description,
       priority: formData.priority,
-      assignee: formData.assignee
+      assignee: formData.assignee,
+      status: formData.status
     };
     axios
       .post("http://localhost:3001/sprints/", payload)
@@ -153,7 +155,11 @@ const Backlog = () => {
               <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Timeline
             </Link>
           </li>
-
+          <li>
+            <Link to="/scrumDashboard">
+              <img src="client/src/assets/timeline.jpg" alt="Board Icon" className="sidebar-icon" /> Dashboard
+            </Link>
+          </li>
 
         </ul>
       </div>
@@ -298,6 +304,21 @@ const Backlog = () => {
                         <option value="Low">Low</option>
                         <option value="Medium">Medium</option>
                         <option value="High">High</option>
+                      </select>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Status</label>
+                      <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="w-full border rounded p-2"
+                        required
+                      >
+                        <option value="">Select status</option>
+                        <option value="To Do">To Do</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
                       </select>
                     </div>
                     <div className="flex justify-end space-x-4">
@@ -474,7 +495,21 @@ const Backlog = () => {
                       ))}
                     </select>
                   </div>
-
+                  <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Status</label>
+                      <select
+                      value={currentTask.status || ""}
+                      onChange={(e) =>
+                        setCurrentTask({ ...currentTask, status: e.target.value })
+                      }
+                      className="w-full p-2 border rounded"
+                    >
+                        <option value="">Select status</option>
+                        <option value="To Do">To Do</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                      </select>
+                    </div>
                   <div className="flex justify-end">
                     <button
                       type="button"

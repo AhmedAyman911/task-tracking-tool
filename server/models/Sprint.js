@@ -8,7 +8,8 @@ const SprintSchema = new mongoose.Schema({
     projectId:{type: String, required: true},
     description: { type: String, required: true },
     priority: { type: String, default: "Medium" },
-    assignee:{ type: String }
+    assignee:{ type: String },
+    status: { type: String, required: true }, 
 })
 const SprintModel = mongoose.model("sprints",SprintSchema)
 module.exports = SprintModel
