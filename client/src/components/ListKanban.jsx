@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "./Nav";
-import SideBar from "./KanbanSide"
+import SideBar from "./KanbanSide";
 
 const ListKanban = () => {
     const [tableData, setTableData] = useState([]);
     const [users, setUsers] = useState([]);
     const [id, setId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
 
-
+    // Fetch users
     useEffect(() => {
         axios
             .get("http://localhost:3001/users/team")
@@ -19,15 +21,35 @@ const ListKanban = () => {
                 console.error("Error fetching users:", error);
             });
     }, []);
+
     // Fetch tasks from the backend
     useEffect(() => {
         const storedProjectId = localStorage.getItem("projectId");
         if (storedProjectId) {
             axios.get(`http://localhost:3001/tasks?projectId=${storedProjectId}`).then((response) => {
                 setTableData(response.data);
+                setFilteredData(response.data); // Initialize filtered data
             });
         }
     }, []);
+
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
+    };
+
+    // Filter data based on the search query
+    useEffect(() => {
+        if (!searchQuery) {
+            setFilteredData(tableData); // If no search query, show all tasks
+        } else {
+            const filtered = tableData.filter((task) =>
+                task.summary.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredData(filtered);
+        }
+    }, [searchQuery, tableData]);
+
     const [showForm, setShowForm] = useState(false);
     const [type, setType] = useState("");
     const [key, setKey] = useState("");
@@ -38,6 +60,7 @@ const ListKanban = () => {
     const [testing, setTesting] = useState("");
     const [uid, setUid] = useState("");
     const projectId = localStorage.getItem("projectId");
+
     const handleSubmit = (e) => {
         const resetForm = () => {
             setType('');
@@ -128,6 +151,7 @@ const ListKanban = () => {
         setId(task._id);
         setShowForm(true);
     };
+
     const handleDelete = (id) => {
         axios
             .delete(`http://localhost:3001/tasks/${id}`)
@@ -142,11 +166,8 @@ const ListKanban = () => {
 
     return (
         <div className="flex h-screen">
-            {/* Navbar */}
             <Navbar />
-            {/* Sidebar */}
-            <SideBar/>
-            {/* Main Content */}
+            <SideBar />
             <main className="flex-1 bg-white flex flex-col pt-16" style={{ marginLeft: '250px' }}>
                 {/* Header */}
 
@@ -154,7 +175,9 @@ const ListKanban = () => {
                 <div className="p-4 flex items-center">
                     <input
                         type="text"
-                        placeholder="Search"
+                        placeholder="Search by Summary"
+                        value={searchQuery}
+                        onChange={handleSearchChange}
                         className="border rounded-md px-4 py-2 w-1/3 mr-5"
                     />
                     <div className="flex -space-x-2">
@@ -170,7 +193,7 @@ const ListKanban = () => {
                         />
                     </div>
                 </div>
-                {/* Table Section */}
+
                 {/* Table Section */}
                 <section className="p-4 flex-grow">
                     <div className="overflow-x-auto rounded-lg shadow">
@@ -195,11 +218,10 @@ const ListKanban = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tableData.map((row, index) => (
+                                {filteredData.map((row, index) => (
                                     <tr
                                         key={index}
-                                        className={`hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                                            }`}
+                                        className={`hover:bg-gray-100 ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
                                     >
                                         <td className="p-3 text-center"></td>
                                         <td className="p-3">{row.type}</td>
@@ -231,11 +253,11 @@ const ListKanban = () => {
                         </table>
                     </div>
                 </section>
+
                 {/* Form Section */}
                 {showForm && (
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
                         <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 relative">
-                            {/* Close Button */}
                             <button
                                 onClick={() => setShowForm(false)}
                                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
@@ -243,7 +265,6 @@ const ListKanban = () => {
                                 ✖
                             </button>
 
-                            {/* Form */}
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <h2 className="text-lg font-bold text-gray-700">Add / Edit Task</h2>
                                 <div>
@@ -339,12 +360,14 @@ const ListKanban = () => {
                                         className="border rounded-md px-4 py-2 w-full"
                                     />
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-                                >
-                                    Save Task
-                                </button>
+                                <div className="flex justify-end">
+                                    <button
+                                        type="submit"
+                                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>

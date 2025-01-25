@@ -1,24 +1,44 @@
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --secondary-color: #c6e6fd;
+    --text-color-dark: #333;
+    --text-color-light: #555;
+    --bg-color-light: #f5f5f5;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.2);
+}
+
 .choose-page {
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serifa;
     padding: 20px;
     text-align: center;
-    background-color: #f5f5f5; 
+    background-color: var(--bg-color-light);
     width: 98%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 65px; /* Added margin to ensure visibility below navbar */
+    margin-left: 15px; /* Added margin to ensure visibility below navbar */
+
 }
-.title{
-    font-size:20px;
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--text-color-dark);
+    margin-bottom: 20px;
 }
+
 .choose-content {
-    text-align: left; 
+    text-align: left;
 }
+
 .navbar {
-    background-color: #c6e6fd;
-    padding: 15px 40px; 
+    background-color: var(--secondary-color);
+    padding: 15px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -27,61 +47,59 @@
     position: fixed;
     top: 0;
     left: 0;
-    font-size: 18px; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    box-shadow: 0 2px 5px var(--shadow-light);
+    z-index: 100;
 }
+
 .navbar a {
-    color: #000;
+    color: var(--text-color-dark);
     text-decoration: none;
     margin: 0 15px;
-    font-size: 18px; 
+    font-size: 18px;
     font-weight: bold;
 }
+
 .navbar a:hover {
-    color: #66b0ff;
+    color: var(--primary-color);
 }
+
 .navbar-brand {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color-dark);
 }
-.navbar-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; 
-}
-.navbar-actions a {
-    margin-right: 0px; 
-}
-.navbar-actions .notification-icon {
-    font-size: 20px;
-    cursor: pointer;
-}
+
 .page-title {
-    margin-top: 120px; 
-    font-size: 32px;
+    margin-top: 120px;
+    font-size: 36px;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color-dark);
+    letter-spacing: 0.5px;
 }
+
 .page-description {
     font-size: 18px;
-    color: #555;
+    color: var(--text-color-light);
     margin-top: 10px;
     margin-bottom: 30px;
+    line-height: 1.6;
 }
+
 .workflow-container {
     max-width: 900px;
     margin: 0 auto;
     text-align: left;
-    background-color: #fff; 
+    background-color: #fff;
     border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 4px 8px var(--shadow-light);
     padding: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; 
+    justify-content: flex-start;
 }
+
 .workflow-card {
     display: flex;
     align-items: center;
@@ -93,56 +111,64 @@
     margin-bottom: 20px;
     font-size: 20px;
     width: 85%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px var(--shadow-light);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    text-align: left; 
 }
+
 .workflow-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px var(--shadow-dark);
 }
+
 .workflow-card img {
-    width: 80px; 
+    width: 80px;
     height: 80px;
     margin-right: 20px;
     display: block;
-    align-self: center; 
+    align-self: center;
 }
+
 .workflow-details {
     flex-grow: 1;
 }
+
 .workflow-title {
-    font-size: 20px; 
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #333;
+    color: var(--text-color-dark);
 }
+
 .workflow-description {
     font-size: 16px;
-    color: #666;
+    color: var(--text-color-light);
 }
+
 .create-button,
 .create-btn {
-    background-color: #007bff;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover-color));
     color: #fff;
     border: none;
-    border-radius: 25px; 
-    padding: 10px 20px; 
+    border-radius: 25px;
+    padding: 12px 24px;
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-    margin-top: auto; 
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    box-shadow: 0 2px 5px var(--shadow-dark);
+    margin-top: auto;
 }
+
 .create-button:hover,
 .create-btn:hover {
-    background-color: #0056b3;
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--primary-hover-color), var(--primary-color));
 }
+
 @media (max-width: 768px) {
     .workflow-card {
         flex-direction: column;
-        align-items: flex-start; 
+        align-items: flex-start;
     }
 
     .workflow-card img {
@@ -150,6 +176,6 @@
     }
 
     .create-button {
-        align-self: flex-end; 
+        align-self: flex-end;
     }
 }
