@@ -5,15 +5,27 @@ const Navbar = () => {
 
   return (
     <nav className="bg-[#c6e6fd] px-10 py-4 flex justify-between items-center border-b border-gray-300 fixed top-0 left-0 w-full shadow-md z-50">
-      {/* Brand */}
       <div className="text-2xl font-bold text-gray-800">Workio</div>
-
-      {/* Links */}
       <div className="space-x-6">
-        <a href="/choose" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
-          New projects
-        </a>
-        <a href="/mprojects" className="text-lg font-bold text-black hover:text-[#66b0ff] transition">
+        {user?.role === "manager" && (
+          <a
+            href="/choose"
+            className="text-lg font-bold text-black hover:text-[#66b0ff] transition"
+          >
+            New project
+          </a>
+        )}
+        <a
+          onClick={() => {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (user?.role === "manager") {
+              window.location.href = "/mprojects";
+            } else {
+              window.location.href = "/DevProjects";
+            }
+          }}
+          className="text-lg font-bold text-black hover:text-[#66b0ff] transition cursor-pointer"
+        >
           Your work
         </a>
       </div>
@@ -27,6 +39,7 @@ const Navbar = () => {
         <button
           onClick={() => {
             localStorage.removeItem("user");
+            localStorage.removeItem("token");
             window.location.href = "/";
           }}
           className="text-red-500 hover:text-red-700 transition flex items-center space-x-1"

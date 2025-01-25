@@ -26,10 +26,7 @@ const KanbanBoard = () => {
     <div className="bg-white h-screen">
       {/* Header */}
       <Navbar />
-
       <SideBar/>
-
-
       {/* Main Content */}
       <main className="flex-1 p-6 "style={{ marginLeft: '230px' }}>
         {/* Kanban Header */}

@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
-import timelineImage from "../assets/timeline.jpg";
-import gettingstartedImage from "../assets/gettingstarted.jpg";
-import goalsImage from "../assets/goals.jpg";
-import boardImage from "../assets/board.jpg";
-import listImage from "../assets/list.jpg";
-import codeImage from "../assets/code.jpg";
 import searchImage from "../assets/search.jpg";
 import axios from "axios";
+import Navbar from "./Nav";
+import Sidebar from "./KanbanSide";
 const KanbanBoard = () => {
 
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -72,73 +68,12 @@ const KanbanBoard = () => {
             alert("Failed to update task status.");
         }
     };
-
-
-
-
     return (
         <div className="bg-white h-screen">
             {/* Header */}
-            <header className="bg-blue-200 p-4 flex justify-between items-center">
-                <div>
-                    <h1 className="text-lg font-bold text-2xl">Workio</h1>
-                </div>
-                <div>
-                    <nav className="space-x-10 text-xl">
-                        <a href="#" className="text-gray-900 hover:text-gray-900 font-semibold">
-                            Create New Project
-                        </a>
-                    </nav>
-                </div>
-                <div className="flex items-center space-x-4 text-xl">
-                    <button className="text-gray-600">🔔</button>
-                    <button className="text-gray-900">Login/Signup</button>
-                </div>
-            </header>
-
-            <div className="flex">
-                {/* Sidebar */}
-                <aside className="w-1/5 bg-white p-4 space-y-6 border-gray-300 rounded border-2 h-full">
-                    <div>
-                        <h2 className="text-xl font-semibold">SPM</h2>
-                        <p className="text-lg text-gray-600">Software project</p>
-                    </div>
-
-                    <div className="space-y-2">
-                        <h3 className="text-lg font-medium text-gray-900">PLANNING</h3>
-                        <nav className="space-y-1">
-                            <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                                <img src={gettingstartedImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                                Getting started
-                            </a>
-                            <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                                <img src={timelineImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                                Timeline
-                            </a>
-                            <a href="#" className="block p-2 bg-gray-200 rounded text-base flex items-center">
-                                <img src={boardImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                                Board
-                            </a>
-                            <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                                <img src={listImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                                List
-                            </a>
-                            <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                                <img src={goalsImage} alt="Timeline" className="w-7 h-7 mr-2" />
-                                Goals
-                            </a>
-                        </nav>
-                    </div>
-
-                    <div className="space-y-2">
-                        <h3 className="text-lg font-medium text-gray-900">DEVELOPMENT</h3>
-                        <a href="#" className="block p-2 rounded hover:bg-blue-200 text-base flex items-center">
-                            <img src={codeImage} alt="Code" className="w-7 h-7 mr-2" />
-                            Code
-                        </a>
-                    </div>
-                </aside>
-
+            <Navbar/>
+            <Sidebar/>
+            <div className="flex mt-16" style={{ marginLeft: '240px' }}>
                 {/* Main Content */}
                 <main className="flex-1 p-6">
                     {/* Kanban Header */}

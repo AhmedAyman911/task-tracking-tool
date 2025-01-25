@@ -11,12 +11,14 @@ import Projects from "./components/projects";
 import KanbanDashboard from "./components/kanbanDashboard";
 import DevProjects from "./components/devProjects"
 import ScrumDashboard from "./components/scrumDashboard"
+import DevList from "./components/devList";
 function App() {
   return (
     <div>
       <Router>
         <Routes>
-        <Route path="/scrumDashboard" element={<ScrumDashboard />} />
+          <Route path="/devList" element={<DevList />} />
+          <Route path="/scrumDashboard" element={<ScrumDashboard />} />
           <Route path="/DevProjects" element={<DevProjects />} />
           <Route path="/scrumtime" element={<ScrumTimeline />} />
           <Route path="/ListKanban" element={<ListKanban />} />
