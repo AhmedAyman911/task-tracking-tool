@@ -109,11 +109,20 @@ const ScrumGanttChart = () => {
             },
         },
     };
+    
 
     // 1. Sprint Progress Chart
     const sprintLabels = [
-        ...new Set(tasks.map((task) => `Sprint ${task.sprint}`).filter((label) => label !== "Sprint 0" && label !== "Sprint null")),
-    ];
+        ...new Set(
+            tasks
+                .map((task) => `Sprint ${task.sprint}`)
+                .filter((label) => label !== "Sprint 0" && label !== "Sprint null")
+        ),
+    ].sort((a, b) => {
+        const sprintA = parseInt(a.split(" ")[1], 10);
+        const sprintB = parseInt(b.split(" ")[1], 10);
+        return sprintA - sprintB;
+    });
     const sprintProgressData = {
         labels: sprintLabels,
         datasets: [
