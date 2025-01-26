@@ -9,7 +9,10 @@ const AuthPage = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/src/assets/blue-abstract-blue-background-gradient-abstract-3840x2160-8985.jpg')"
+      }}
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-center mb-6 border-b pb-4">

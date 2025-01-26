@@ -3,7 +3,7 @@ import axios from "axios";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import Navbar from "./Nav";
-import SideBar from "./KanbanSide"
+import SideBar from "./KanbanSide";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +13,8 @@ import {
   LineElement,
   PointElement,
   Tooltip,
-  Legend, TimeScale
+  Legend,
+  TimeScale,
 } from "chart.js";
 
 ChartJS.register(
@@ -24,7 +25,8 @@ ChartJS.register(
   LineElement,
   PointElement,
   Tooltip,
-  Legend, TimeScale
+  Legend,
+  TimeScale
 );
 
 const KanbanDashboard = () => {
@@ -151,22 +153,21 @@ const KanbanDashboard = () => {
     },
   };
 
-
   return (
     <div className="p-6">
       {/* Navbar */}
       <Navbar />
-      <SideBar/>
-      <div style={{ marginLeft: '250px' }}>
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Kanban Dashboard</h1>
-        <div className="grid grid-cols-2 gap-6">
+      <SideBar />
+      <div className="ml-64">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 mt-16">Kanban Dashboard</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {/* Doughnut Chart for Selected Assignee */}
-          <div className="bg-white shadow-md rounded-lg p-4">
-            <h2 className="text-xl font-bold mb-4">Tasks by Assignee</h2>
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Tasks by Assignee</h2>
             <select
               value={selectedAssignee}
               onChange={(e) => setSelectedAssignee(e.target.value)}
-              className="w-full p-2 border rounded mb-4"
+              className="w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">Select Assignee</option>
               {uniqueAssignees.map((assignee) => (
@@ -175,7 +176,7 @@ const KanbanDashboard = () => {
                 </option>
               ))}
             </select>
-            <div className="h-64">
+            <div className="h-64 mt-4">
               {selectedAssignee ? (
                 <Doughnut data={assigneeTaskData} options={{ maintainAspectRatio: false }} />
               ) : (
@@ -185,9 +186,9 @@ const KanbanDashboard = () => {
           </div>
 
           {/* Task Due Dates vs Completed Dates */}
-          <div className="bg-white shadow-md rounded-lg p-4">
-            <h2 className="text-xl font-bold mb-4">Done Tasks: Due Dates vs Completed Dates</h2>
-            <div className="h-80">
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Done Tasks: Due Dates vs Completed Dates</h2>
+            <div className="h-80 mt-4">
               {doneTasks.length > 0 ? (
                 <Line data={data} options={options} />
               ) : (
@@ -197,10 +198,10 @@ const KanbanDashboard = () => {
           </div>
         </div>
 
-        {/* Centered Task Status Distribution */}
+        {/* Task Status Distribution */}
         <div className="flex justify-center mt-8">
-          <div className="bg-white shadow-md rounded-lg p-4 w-1/3">
-            <h2 className="text-xl font-bold mb-4">Task Status Distribution</h2>
+          <div className="bg-white shadow-lg rounded-lg p-6 w-1/3">
+            <h2 className="text-xl font-semibold mb-4">Task Status Distribution</h2>
             <div className="h-80">
               <Bar data={taskStatusData} options={{ maintainAspectRatio: false }} />
             </div>
