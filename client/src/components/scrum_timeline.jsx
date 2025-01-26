@@ -118,62 +118,7 @@ const ScrumTimeline = () => {
         console.error("Error fetching users:", error);
       });
   }, []);
-  /*
-    const saveTask = async (sprintIndex, taskIndex) => {
-      const task = sprints[sprintIndex].tasks[taskIndex];
-  
-      if (!task.name || !task.role || !task.from || !task.to) {
-        alert("Please fill out all fields before saving.");
-        return;
-      }
-  
-      try {
-        const response = await axios.post("http://localhost:3001/sprints/", {
-          sprint: sprintIndex + 1,
-          task_name: task.name,
-          role: task.role,
-          from: task.from.toISOString(),
-          to: task.to.toISOString(),
-          projectId: projectId
-        });
-  
-        if (response.status === 201) {
-          fetchSprints(); // Refresh data after saving
-          alert("Task saved successfully!");
-        }
-      } catch (error) {
-        console.error("Error saving task:", error.response || error.message);
-        alert("Failed to save task. Please try again later.");
-      }
-    };
-    const deleteTask = async (sprintIndex, taskIndex, taskID) => {
-      const task = sprints[sprintIndex].tasks[taskIndex];
-  
-      if (!task.isNew) {
-        try {
-          await axios.delete(`http://localhost:3001/api/sprints/delete/${taskID}`);
-          fetchSprints();
-        } catch (error) {
-          console.error("Error deleting task:", error);
-          alert("Failed to delete task. Please try again later.");
-        }
-      } else {
-        const updatedSprints = [...sprints];
-        updatedSprints[sprintIndex].tasks.splice(taskIndex, 1);
-        setSprints(updatedSprints);
-      }
-    };
-    const deleteSprint = async (sprintIndex) => {
-      const sprint = sprints[sprintIndex];
-  
-      try {
-        await axios.delete(`http://localhost:3001/api/sprints/deleteSprint/${sprint.name}`);
-        fetchSprints();
-      } catch (error) {
-        console.error("Error deleting sprint:", error);
-        alert("Failed to delete sprint. Please try again later.");
-      }
-    };*/
+ 
   const resetSprintTask = async (taskId) => {
     try {
       axios.put(`http://localhost:3001/sprints/tasks/${taskId}`, {
@@ -207,10 +152,10 @@ const ScrumTimeline = () => {
       <div className="flex" style={{ marginTop: '100px', marginLeft: '230px' }}>
         <main className="flex-1 p-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold mb-6">Sprints</h1>
+            <h1 className="text-xl font-bold mb-6 ml-20">Sprints</h1>
             <button
               onClick={addSprint}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mr-20 mb-6"
             >
               <FontAwesomeIcon icon={faPlus} /> Add Sprint
             </button>
